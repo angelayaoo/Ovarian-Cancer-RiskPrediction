@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Yao"
+    given-names: "Jiayi"
+title: "Ovarian Cancer RiskSLIM: Integer Scorecard for Ovarian Cancer Risk Prediction"
+version: 1.0.0
+date-released: 2026-07-30
+url: "https://github.com/yaojiayi2020/Ovarian-Cancer-RiskSLIM"
