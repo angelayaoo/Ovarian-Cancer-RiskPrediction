@@ -6,6 +6,9 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import roc_auc_score
 from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import KBinsDiscretizer, QuantileTransformer, StandardScaler
 from sklearn.impute import KNNImputer
@@ -133,6 +136,16 @@ fixed_xgb = XGBClassifier(
 )
 fixed_xgb.fit(X_train_norm, y_train)
 
+fixed_cat = CatBoostClassifier(n_estimators=500, depth=10, learning_rate=0.3,
+                               random_seed=42, verbose=0)
+fixed_cat.fit(X_train_norm, y_train)
+
+fixed_dt = DecisionTreeClassifier(max_depth=10, random_state=42)
+fixed_dt.fit(X_train_norm, y_train)
+
+fixed_rf = RandomForestClassifier(n_estimators=500, max_depth=10, random_state=42)
+fixed_rf.fit(X_train_norm, y_train)
+
 fixed_rslim = PreTrainedRiskSLIM(n_bins=3)
 fixed_rslim.fit(X_train, y_train)
 
@@ -167,7 +180,7 @@ for cohort_name, path in cohort_files.items():
         continue
 
     for noise in noise_levels:
-        roma_aucs, xgb_aucs, rslim_aucs = [], [], []
+        roma_aucs, xgb_aucs, cat_aucs, dt_aucs, rf_aucs, rslim_aucs = [], [], [], [], [], []
 
         for _ in range(N_PERTURBATIONS):
             noise_mat = np.random.normal(1.0, noise, (len(X_clean), 2))
@@ -175,16 +188,27 @@ for cohort_name, path in cohort_files.items():
             X_noisy['CA125'] = np.maximum(X_clean['CA125'].values * noise_mat[:, 0], 1e-5)
             X_noisy['HE4']   = np.maximum(X_clean['HE4'].values * noise_mat[:, 1], 1e-5)
 
+            X_noisy_norm = pd.DataFrame(qt.transform(X_noisy), columns=X_noisy.columns)
+
             roma_score = compute_roma(X_noisy)
-            xgb_score  = fixed_xgb.predict_proba(pd.DataFrame(qt.transform(X_noisy), columns=X_noisy.columns))[:, 1]
+            xgb_score  = fixed_xgb.predict_proba(X_noisy_norm)[:, 1]
+            cat_score  = fixed_cat.predict_proba(X_noisy_norm)[:, 1]
+            dt_score   = fixed_dt.predict_proba(X_noisy_norm)[:, 1]
+            rf_score   = fixed_rf.predict_proba(X_noisy_norm)[:, 1]
             rslim_score = fixed_rslim.predict_score(X_noisy)
 
             roma_auc = roc_auc_score(y_eval, roma_score)
             xgb_auc  = roc_auc_score(y_eval, xgb_score)
+            cat_auc  = roc_auc_score(y_eval, cat_score)
+            dt_auc   = roc_auc_score(y_eval, dt_score)
+            rf_auc   = roc_auc_score(y_eval, rf_score)
             rslim_auc = roc_auc_score(y_eval, rslim_score)
 
             roma_aucs.append(roma_auc if roma_auc >= 0.5 else 1 - roma_auc)
             xgb_aucs.append(xgb_auc if xgb_auc >= 0.5 else 1 - xgb_auc)
+            cat_aucs.append(cat_auc if cat_auc >= 0.5 else 1 - cat_auc)
+            dt_aucs.append(dt_auc if dt_auc >= 0.5 else 1 - dt_auc)
+            rf_aucs.append(rf_auc if rf_auc >= 0.5 else 1 - rf_auc)
             rslim_aucs.append(rslim_auc if rslim_auc >= 0.5 else 1 - rslim_auc)
 
         results.append({
@@ -192,6 +216,9 @@ for cohort_name, path in cohort_files.items():
             'Noise': f"{int(noise*100)}%",
             'ROMA Formula': f"{np.mean(roma_aucs):.4f} (±{np.std(roma_aucs):.3f})",
             'XGBoost': f"{np.mean(xgb_aucs):.4f} (±{np.std(xgb_aucs):.3f})",
+            'CatBoost': f"{np.mean(cat_aucs):.4f} (±{np.std(cat_aucs):.3f})",
+            'Decision Tree': f"{np.mean(dt_aucs):.4f} (±{np.std(dt_aucs):.3f})",
+            'Random Forest': f"{np.mean(rf_aucs):.4f} (±{np.std(rf_aucs):.3f})",
             'Optimized RiskSLIM': f"{np.mean(rslim_aucs):.4f} (±{np.std(rslim_aucs):.3f})"
         })
 
