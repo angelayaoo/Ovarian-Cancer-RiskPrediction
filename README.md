@@ -58,3 +58,33 @@ Master Results Table
 | **Japanese** | 10% | nan (±nan) | nan (±nan) | nan (±nan) |
 | **Japanese** | 15% | nan (±nan) | nan (±nan) | nan (±nan) |
 | **Japanese** | 20% | nan (±nan) | nan (±nan) | nan (±nan) |
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install pandas numpy scikit-learn xgboost matplotlib openpyxl
+
+# Run the full Monte Carlo benchmark
+python src/run_monte_carlo_benchmarks.py
+
+# Generate results plots
+python src/generate_results_summary.py
+python src/plot_degradation_curves.py
+
+# Run lab drift simulation
+python src/lab_drift_simulation.py
+```
+
+## Citation
+
+If you use this work, please cite:
+
+```bibtex
+@software{yao2026ovarian,
+  title = {Ovarian Cancer RiskSLIM: Integer Scorecard for Ovarian Cancer Risk Prediction},
+  author = {Yao, Jiayi},
+  year = {2026},
+  url = {https://github.com/yaojiayi2020/Ovarian-Cancer-RiskSLIM}
+}
+```
