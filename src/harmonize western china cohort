@@ -1,0 +1,43 @@
+import pandas as pd
+
+# 1. Load the two separate datasets
+# Make sure these filenames exactly match what is in your /data/raw/ folder!
+df_cancer = pd.read_csv('../data/raw/western chinese cohort.xlsx - Ovarian Cancer.csv')
+df_cysts = pd.read_csv('../data/raw/western chinese cohort.xlsx - Ovarian Cysts.csv')
+
+# 2. Add the target variable (label) BEFORE combining
+df_cancer['label'] = 1    # 1 = Malignant (Ovarian Cancer)
+df_cysts['label'] = -1    # -1 = Benign (Ovarian Cysts)
+
+# 3. Combine the two datasets into one large validation cohort
+# Pandas will automatically assign 'NaN' for the FIGO staging in the Cysts dataset.
+df_combined = pd.concat([df_cancer, df_cysts], ignore_index=True)
+
+# 4. Dynamically clean ALL column headers
+# This makes everything lowercase, removes special characters, and replaces spaces with underscores
+df_combined.columns = (df_combined.columns
+                       .str.strip()
+                       .str.lower()
+                       .str.replace(' ', '_')
+                       .str.replace('(', '')
+                       .str.replace(')', '')
+                       .str.replace('/', '_'))
+
+# 5. Rename the core variables to perfectly match the Chinese Discovery Cohort
+rename_map = {
+    'menopausal_status': 'menopause',
+    'preoperative_serum_ca125_u_ml': 'ca125',
+    'preoperative_serum_he4_pmol_l': 'he4'
+}
+df_combined = df_combined.rename(columns=rename_map)
+
+# 6. Verify Units
+df_combined['ca125'] = df_combined['ca125'] * 1.0
+df_combined['he4'] = df_combined['he4'] * 1.0
+
+# 7. Save the combined, harmonized file with ALL features included
+df_combined.to_csv('../data/processed/processed_west_china_cohort.csv', index=False)
+
+print("Data Harmonization Complete.")
+print(f"Total Validation Patients: {len(df_combined)}")
+print(f"Total Features Kept: {len(df_combined.columns)}")
