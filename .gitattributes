@@ -1,0 +1,17 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Python
+*.py text diff=python
+
+# Data files
+*.csv text
+*.xlsx binary
+
+# Images
+*.png binary
+*.jpg binary
+
+# Documents
+*.md text diff=markdown
+*.docx binary
