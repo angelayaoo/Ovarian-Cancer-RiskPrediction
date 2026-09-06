@@ -395,9 +395,9 @@ formulas were farther from the data: ROMA had Brier 0.209, slope 1.53,
 and ECE 0.220; CPH-I had Brier 0.259, slope 1.11, and ECE 0.303. Both
 over-predicted risk (calibration-in-the-large $-0.95$ and $-1.42$).
 
-The models were also refitted without HE4: the scorecard then scored
-0.925, the logistic regression 0.932, and XGBoost 0.891 on the imputed
-cohort, agreeing with the complete-case ranking (Table~\ref{tab:auroc}).
+Refitting without HE4 gave 0.925 (scorecard), 0.932 (logistic
+regression), and 0.891 (XGBoost) on the imputed cohort, agreeing with
+the complete-case ranking (Table~\ref{tab:auroc}).
 Multiple imputation by chained equations (MICE) preserved the
 flexible-model ranking (logistic regression 0.926) but degraded the
 scorecard's tertile binning (0.853), motivating the complete-case
@@ -406,9 +406,8 @@ primary analysis.
 \subsection{Robustness and simulation}
 
 For robustness to measurement noise (West China, $N=380$), losses
-under 30\% multiplicative noise were 0.040 for the scorecard, 0.002 for the
-logistic regression, 0.074 for ROMA, and 0.086 for XGBoost, with the
-same order under other noise types and 5\% contamination.
+under 30\% multiplicative noise were 0.040 for the scorecard, 0.002 for
+the logistic regression, 0.074 for ROMA, and 0.086 for XGBoost.
 
 In the simulation (Figure~\ref{fig:regime}), the
 ensemble-average minus-scorecard gap averaged $+0.018$ at drift level
@@ -440,33 +439,35 @@ selected in 18 of 20 repeats. In-sample the ensembles fitted at
 
 \section{Discussion and Conclusion}
 
-Three bottom lines follow. First, for model choice: seven integer
-parameters matched models with thousands of parameters; the scorecard
-was numerically best on the complete cases (0.971) and matched by the
-logistic regression on the imputed cohort (0.936 vs.\ 0.929); CPH-I won
-the Japan stress test (0.920).
-Second, for triage: the published cutpoints missed 82 of 188 cancers
-versus 47 for the locally fitted scorecard, and with all models
-recalibrated its minimum harm stayed lowest up to 5:1. Third, for transportability: the impact of drift was explored
-through simulation, not demonstrated empirically.
+The results show three things. First, on discrimination: adding model
+complexity did not buy external accuracy. Seven integer parameters
+matched models with thousands of parameters; the scorecard was
+numerically best on the complete cases (0.971), the logistic regression
+matched or slightly exceeded it on the imputed cohort (0.936 vs.\
+0.929), and CPH-I won the Japan stress test (0.920). Second, on
+decisions: the published cutpoints missed 82 of 188 cancers versus 47
+for the locally fitted scorecard, and with all models recalibrated its
+minimum harm stayed lowest up to 5:1. Third, on why: the simulation
+shows one concrete theoretical mechanism by which complexity can hurt
+when the training structure does not persist.
 
-
+In short, a hand-computable integer scorecard can match far more
+complex models, miss fewer cancers than off-the-shelf formulas, and
+stay fully transparent.
 
 The main limitations are as follows. (i) All three cohorts are Asian
 hospital series, so results may not transfer to other populations. (ii) the 74\% missing-HE4 rate in West China and the small Japanese
-sample ($n=177$) are structural limitations; the ranking was unchanged
-when HE4 was excluded, and complete-case results agreed with the
-imputed ones. (iii) ultrasound-based models could not be tested (the public data lack
-imaging); (iv) the simulation is a simplification, not a proof about any
-specific hospital.
+sample ($n=177$) are structural limitations, but complete-case and
+imputed results agreed. (iii) ultrasound-based models could not be tested (the public
+data lack imaging); (iv) the simulation is a simplification, not a
+proof about any specific hospital.
 
-Future work should add ultrasound findings and other clinical
-variables, validate the scorecard prospectively on Western and
-community-hospital populations, and test whether the same conclusion
-holds for other tumor markers and sites. As a proof of concept for transparent triage (retrospective, not
-prospective validation), the integer scorecard offers a potentially
-auditable, computationally free alternative that matches the
-best-performing models while remaining computable by hand.
+Future work should add ultrasound variables, validate prospectively,
+and test other tumor markers. As a proof of concept for transparent
+triage (retrospective, not prospective validation), the
+integer scorecard offers a potentially auditable, computationally free
+alternative that matches the best-performing models while remaining
+computable by hand.
 
 \begin{thebibliography}{00}
 \bibitem{moore2011} R. G. Moore, M. C. Miller, P. Disilvestro, et al.,
