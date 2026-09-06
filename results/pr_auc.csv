@@ -1,0 +1,25 @@
+Cohort,Model,PR-AUC,AUROC
+Training (in-sample),Scorecard,0.9222,0.9119
+Training (in-sample),Raw LR,0.9212,0.8971
+Training (in-sample),ROMA,0.9301,0.9122
+Training (in-sample),CPH-I,0.9303,0.9116
+Training (in-sample),CA125 rule,0.6473,0.727
+Training (in-sample),XGBoost,1.0,1.0
+Training (in-sample),CatBoost,0.9913,0.9911
+Training (in-sample),Random Forest,1.0,1.0
+West China,Scorecard,0.9279,0.9292
+West China,Raw LR,0.9365,0.9358
+West China,ROMA,0.9126,0.8864
+West China,CPH-I,0.9013,0.8684
+West China,CA125 rule,0.58,0.6416
+West China,XGBoost,0.9177,0.8867
+West China,CatBoost,0.9206,0.8786
+West China,Random Forest,0.917,0.8787
+Japan,Scorecard,0.705,0.843
+Japan,Raw LR,0.7108,0.8036
+Japan,ROMA,0.6812,0.7967
+Japan,CPH-I,0.775,0.9204
+Japan,CA125 rule,0.4529,0.7815
+Japan,XGBoost,0.6078,0.734
+Japan,CatBoost,0.6416,0.7488
+Japan,Random Forest,0.6451,0.7923

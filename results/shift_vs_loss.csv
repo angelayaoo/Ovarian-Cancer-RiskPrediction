@@ -1,0 +1,17 @@
+Cohort,Model,Transfer loss,Mean KS shift,External AUROC
+West China,Scorecard,-0.023,0.217,0.929
+West China,Raw LR,-0.042,0.217,0.936
+West China,ROMA,0.026,0.217,0.886
+West China,CPH-I,0.044,0.217,0.868
+West China,CA125 rule,0.085,0.217,0.642
+West China,XGBoost,-0.005,0.217,0.887
+West China,CatBoost,0.021,0.217,0.879
+West China,Random Forest,0.016,0.217,0.879
+Japan,Scorecard,0.063,0.503,0.843
+Japan,Raw LR,0.09,0.503,0.804
+Japan,ROMA,0.115,0.503,0.797
+Japan,CPH-I,-0.008,0.503,0.92
+Japan,CA125 rule,-0.054,0.503,0.781
+Japan,XGBoost,0.148,0.503,0.734
+Japan,CatBoost,0.151,0.503,0.749
+Japan,Random Forest,0.103,0.503,0.792

@@ -1,90 +1,150 @@
-﻿# Ovarian Cancer RiskSLIM — Integer Scorecard for Risk Prediction
+﻿# Model Complexity Versus Transportability in Ovarian Cancer Risk Prediction
 
-An integer-weighted clinical scorecard for ovarian cancer risk stratification that outperforms the clinical-standard ROMA on external cross-cohort validation while degrading 4× less than complex machine learning models under laboratory measurement noise.
+Repository for the ML4H 2026 Proceedings-track submission: *"Model Complexity
+Versus Transportability in Ovarian Cancer Risk Prediction: A Cross-Cohort
+Benchmark with Decision Analysis."*
 
-## Results Summary
+An eight-model benchmark (CA125 rule, ROMA, CPH-I, unbinned logistic
+regression, a seven-weight integer scorecard, XGBoost, CatBoost, Random
+Forest) trained frozen on a Chinese cohort (n = 349) and externally
+validated on two Asian cohorts (West China, n = 380; Japan, n = 177), with
+meta-analytic pooling, weighted-harm decision analysis, robustness
+experiments, and a synthetic concept-drift simulation.
 
-**5-model comparison, 3 Asian cohorts, 7 noise levels (0–30%), 100 Monte Carlo perturbations each**
-
-| Model | OG China (Internal) | West China (External) | Japan (External) | Overfit Δ | Noise Δ (West) |
-|---|---:|---:|---:|---:|---:|
-| **RiskSLIM** | 0.9032 | **0.9292** | **0.7689** | **−0.026** | **−0.043** |
-| CatBoost | 0.9911 | 0.9066 | 0.7380 | +0.085 | −0.086 |
-| Random Forest | 0.9962 | 0.9012 | 0.7621 | +0.095 | −0.067 |
-| XGBoost | 0.9716 | 0.8906 | 0.6836 | +0.081 | −0.106 |
-| ROMA | 0.8986 | 0.8753 | 0.7485 | +0.023 | −0.068 |
-
-RiskSLIM is the **only model that generalizes** (external AUROC exceeds internal). All tree-based models overfit by +0.08–0.10.
-
-## Scorecard
-
-| Feature | Low (0–33%) | Mid (33–66%) | High (66–100%) |
-|---|---:|---:|---:|
-| CA125 | −1 | 0 | +2 |
-| HE4 | −4 | −1 | +5 |
-| Age | −2 | 0 | +2 |
-| Menopause | 0 | 0 | 0 |
-
-7 non-zero integer weights. Bedside-computable in under 10 seconds.
-
-## Methodology
+## Repository layout
 
 ```
-KNN imputation (per class, k=5) → 4 features (CA125, HE4, Age, Menopause)
-→ QuantileTransformer (uniform [0,1]) → KBinsDiscretizer (3 quantile bins)
-→ L2 logistic regression (C=1.5) → integer rounding [-5, 5]
-→ Monte Carlo evaluation: 100 perturbations × 7 noise levels × 3 cohorts
+paper/          ML4H submission: main.tex, ref.bib, jmlr class files,
+                figures/ (Figures 1-5 + grayscale versions), compiled main.pdf
+src/            all analysis code (see "How to Reproduce")
+data/raw/       the three public cohort files as downloaded
+data/processed/ analysis-ready feature/label files
+results/        every CSV behind the paper's tables and figures
+journal/        secondary BMC-journal manuscript artifacts (optional)
 ```
 
-## Quick Start
+## Environment setup
+
+Python 3.13 with the pinned packages in `requirements.txt`:
 
 ```bash
-pip install pandas numpy scikit-learn xgboost catboost matplotlib openpyxl
-python src/run_monte_carlo_benchmarks.py    # Full benchmark (~10 min)
-python src/generate_results_summary.py       # Docs + plots
-python src/plot_degradation_curves.py        # Degradation curves
-python src/lab_drift_simulation.py           # Lab drift analysis
-python src/generate_figures.py               # Publication figures
-python src/statistical_tests.py              # Bootstrap significance + risk stratification
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Repository Structure
+LaTeX (for the paper): any of Tectonic (`tectonic -X compile main.tex`),
+Overleaf (upload `paper/`), or TeX Live. The ML4H-modified `jmlr.cls` ships
+inside `paper/`.
 
-```
-src/
-├── run_monte_carlo_benchmarks.py   # Main benchmark pipeline
-├── lab_drift_simulation.py         # Gaussian noise degradation
-├── prepare_riskslim.py             # Scorecard generation
-├── run_riskslim_solver.py          # Integer scorecard solver
-├── validate_scorecard.py           # External validation
-├── train_pipeline.py               # CV + threshold tuning
-├── clean_data.py                   # Data preprocessing
-├── impute_data.py                  # KNN imputation
-├── statistical_tests.py            # Bootstrap + risk tiers
-├── generate_results_summary.py     # Docs + bar charts
-├── generate_figures.py             # Publication figures
-├── plot_degradation_curves.py      # Degradation line plots
-├── compare_models.py               # Model comparison tables
-└── harmonize western china cohort  # Cohort harmonization
-data/
-├── raw/          (5 raw cohort files)
-└── processed/    (6 cleaned + scorecard CSVs)
-figures/          (6 publication-quality PNGs)
-results/          (benchmark CSV + plots)
-docs/             (summary plots + markdown)
+## Data access
+
+All three cohorts are public and de-identified; no new data collection was
+performed.
+
+| Cohort | Role | Repository | URL |
+|---|---|---|---|
+| Chinese (n = 349; 171 cancer / 178 benign) | training | Mendeley Data | https://doi.org/10.17632/th7fztbrv9.11 |
+| West China (n = 380; 188 cancer / 192 benign cysts) | external | figshare | https://doi.org/10.6084/m9.figshare.28831256 |
+| Japan (n = 177; 27 cancer / 150 healthy) | external stress test | Karger figshare | https://doi.org/10.6084/m9.figshare.24235450 |
+
+Download the files into `data/raw/` (the repository already contains them);
+`data/processed/` holds the harmonized feature/label files produced by the
+preprocessing step below.
+
+## How to Reproduce
+
+All commands run from the repository root. Runtime notes: the full pipeline
+takes ~45 minutes, dominated by the simulation study (~25 min) and repeated
+cross-validation (~10 min).
+
+### 1. Preprocessing (raw → processed)
+
+`data/processed/` ships precomputed with the repository (the exact files used
+for every number in the paper). The Chinese-cohort preprocessing is fully
+reproducible and verified byte-identical:
+
+```bash
+python src/clean_data.py      # raw Chinese CSV -> chinese_train_cleaned.csv
+python src/impute_data.py     # class-stratified KNN imputation
 ```
 
-## Citation
+### 2. Numerical results behind Tables 1-4
+
+```bash
+# Table 1  (AUROC by model and cohort, 0% noise; noise grid + pairwise tests)
+python src/clinical_comparators.py
+
+# Internal validity: repeated 5-fold CV, 1-SE selection stability, nested CV
+python src/repeated_cv.py
+
+# Table 2  (random-effects pooling across the two external cohorts)
+python src/meta_analysis.py
+
+# Calibration, PR-AUC, NRI/IDI (cited in Results)
+python src/calibration_metrics.py
+
+# Table 3  (weighted-harm decision analysis) + consequence-curve data
+python src/decision_harm_analysis.py
+
+# DCA with bootstrap bands + operating points
+python src/decision_analysis.py
+
+# Robustness: noise types, outliers, cutpoint perturbation, learning curves
+python src/robustness_extended.py
+
+# Table 4  (factor decomposition) + regime-map data + gamma sweep (~25 min)
+python src/simulation_study.py
+
+# Optional sensitivities cited in the paper
+python src/select_config.py
+python src/tree_tuning_grid.py
+```
+
+### 3. Figures 1-5
+
+```bash
+python src/make_ml4h_figures.py
+```
+
+writes `paper/figures/fig_ladder_col.png`, `fig_consequences.png`,
+`fig_noise_col.png`, `fig_learning.png`, `fig_regime_col.png` and their
+grayscale companions. A one-shot driver for the whole pipeline is
+`bash reproduce.sh`.
+
+### 4. Paper
+
+```bash
+cd paper
+tectonic -X compile main.tex      # or build in Overleaf / LaTeX Workshop
+```
+
+Expected output: 9-10 pages (8-page body limit for Proceedings), 0 errors,
+0 overfull warnings, two-column layout.
+
+## Table/Figure mapping
+
+| Paper item | Produced by |
+|---|---|
+| Table 1 (AUROC by model/cohort) | `src/clinical_comparators.py` |
+| Table 2 (pooled differences) | `src/meta_analysis.py` |
+| Table 3 (weighted harm) | `src/decision_harm_analysis.py` |
+| Table 4 (factor decomposition) | `src/simulation_study.py` → `results/factor_decomposition.csv` |
+| Figure 1 (complexity ladder) | `src/make_ml4h_figures.py` |
+| Figure 2 (consequence curves) | `src/make_ml4h_figures.py` |
+| Figure 3 (noise degradation) | `src/make_ml4h_figures.py` |
+| Figure 4 (learning curves) | `src/make_ml4h_figures.py` |
+| Figure 5 (regime map) | `src/make_ml4h_figures.py` |
+
+## License and citation
+
+MIT (see LICENSE). If you use the data, cite the originating datasets and
+this work:
 
 ```bibtex
-@software{yao2026ovarian,
-  title = {Ovarian Cancer RiskSLIM: Integer Scorecard for Ovarian Cancer Risk Prediction},
-  author = {Yao, Jiayi},
-  year = {2026},
-  url = {https://github.com/angelayaoo/Ovarian-Cancer-RiskSLIM}
+@software{ovarian_complexity_transportability,
+  title = {Model Complexity Versus Transportability in Ovarian Cancer Risk
+           Prediction: A Cross-Cohort Benchmark with Decision Analysis},
+  year = {2026}
 }
 ```
-
-## License
-
-MIT

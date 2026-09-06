@@ -1,0 +1,4 @@
+family,nested_cv_auroc,sd
+XGBoost,0.885,0.0285
+CatBoost,0.9004,0.0403
+Random Forest,0.9032,0.0349

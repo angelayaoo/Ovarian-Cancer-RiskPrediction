@@ -1,0 +1,6 @@
+Strategy,Sensitivity,Specificity,Missed cancers per 100,Unnecessary referrals per 100
+Scorecard high-risk tier (score >= +1),0.75,0.974,25.0,2.6
+ROMA published cutoffs (13.1%/27.7%),0.564,0.969,43.6,3.1
+CPH-I cutoff (>= 7%),0.745,0.948,25.5,5.2
+CA125 >= 35 U/mL,0.846,0.438,15.4,56.2
+Treat all (reference),1.0,0.0,0.0,50.5

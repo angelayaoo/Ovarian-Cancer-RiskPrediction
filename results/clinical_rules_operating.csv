@@ -1,0 +1,4 @@
+Rule,Cutoff,Sensitivity,Specificity,PPV,NPV,Referred (N),Missed cancers (N),Unnecessary referrals (N)
+CA125 rule,>= 35 U/mL,0.846,0.438,0.596,0.743,267,29,108
+ROMA,>= 13.1% (pre) / 27.7% (post),0.564,0.969,0.946,0.694,112,82,6
+CPH-I,>= 7%,0.745,0.948,0.933,0.791,150,48,10
