@@ -218,11 +218,11 @@ bin boundaries.
 
 \subsection{Implementation and availability}
 
-Analyses used Python 3.13 with scikit-learn 1.6, XGBoost 2.1 (100 trees,
-depth 6, learning rate 0.3), CatBoost 1.2 (1{,}000 iterations, depth 6,
-learning rate 0.03), and Random Forest (100 trees, no depth cap), all with
-random seed 42; cross-validation used stratified five-fold splits, and
-the simulation used 20 replicates per condition. The complete code, figure scripts, and results
+Analyses used Python 3.13 with scikit-learn 1.7.2, XGBoost 3.3.0 (100
+trees, depth 6, learning rate 0.3), CatBoost 1.2.10 (1{,}000 iterations,
+depth 6, learning rate 0.03), and Random Forest (100 trees, no depth
+cap), all with random seed 42; cross-validation used stratified
+five-fold splits, and the simulation used 20 replicates per condition. The complete code, figure scripts, and results
 are available at
 \url{https://github.com/angelayaoo/Ovarian-Cancer-RiskSLIM}, with a
 one-command pipeline (\texttt{reproduce.sh}) and pinned dependencies.

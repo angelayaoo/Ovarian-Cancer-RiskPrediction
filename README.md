@@ -1,48 +1,81 @@
 ﻿# Model Complexity Versus Transportability in Ovarian Cancer Risk Prediction
 
-Repository for the IEEE BIBM 2026 Undergraduate & High School Symposium
-(UGHS) submission: *"Model Complexity Versus Transportability in Ovarian
-Cancer Risk Prediction"* (5 pages, IEEE conference format).
+**Jiayi Yao** (BASIS Independent Bellevue, Bellevue, WA, USA),
+**Zooey Lane Go Hua** (Issaquah High School, Issaquah, WA, USA),
+**Vritika S Sharma** (Issaquah High School, Issaquah, WA, USA)
 
-An eight-model benchmark (CA125 rule, ROMA, CPH-I, logistic regression, a
-hand-computable integer scorecard, XGBoost, CatBoost, Random Forest)
-trained frozen on a Chinese cohort (Changzhou, n = 349) and externally
-validated on two Asian cohorts (West China, n = 380; Japan, n = 177), with
-complete-case and imputed co-primary analyses, meta-analytic pooling,
-weighted-harm decision analysis, calibration reporting, robustness
-experiments, and an illustrative concept-drift simulation.
+Submission to the IEEE BIBM 2026 Undergraduate & High School Symposium
+(UGHS), IEEE conference format, 5 pages.
 
-## Repository layout
+## Overview
 
-```
-bmib_hs/        BIBM UGHS submission: main.tex, compiled main.pdf,
-                figures/ (Figures 1-3)
-src/            all analysis code (see "How to Reproduce")
-data/raw/       the three public cohort files as downloaded
-data/processed/ analysis-ready feature/label files
-results/        every CSV behind the paper's tables and figures
-reproduce.sh    one-shot pipeline for all numbers and figures
-```
+Eight models (a CA125 cutoff rule, the clinical formulas ROMA and CPH-I, a
+logistic regression, a hand-computable integer scorecard, and three tree
+ensembles) are trained once on a Chinese cohort (Changzhou, n = 349) and
+applied unchanged to two independent Asian cohorts (West China, n = 380;
+Japan, n = 177). Complete-case (measured-HE4) and imputed co-primary
+external benchmarks, a random-effects meta-analysis, weighted-harm
+decision analysis, calibration reporting, robustness experiments, and an
+illustrative concept-drift simulation show that a seven-parameter integer
+scorecard matches more complex models' discrimination while remaining
+transparent, auditable, and computable by hand.
 
 ## Environment setup
 
-Python 3.13 with the pinned packages in `requirements.txt`:
-
 ```bash
+git clone https://github.com/angelayaoo/Ovarian-Cancer-RiskSLIM.git
+cd Ovarian-Cancer-RiskSLIM
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-LaTeX (for the paper): Tectonic
-(`cd bmib_hs && tectonic -X compile main.tex`) or Overleaf. The paper uses
-the standard `IEEEtran` conference class with Times-compatible fonts
-(`newtxtext`/`newtxmath`).
+`requirements.txt` pins the exact environment used to produce every
+reported number (Python 3.13; scikit-learn 1.7.2, XGBoost 3.3.0,
+CatBoost 1.2.10, numpy 2.3.5, pandas 2.3.3, matplotlib 3.10.6,
+scipy 1.16.3, statsmodels 0.14.5, pillow 12.3.0). All analyses use
+`random_state=42` (`src/bench_lib.py`, `SEED = 42`).
 
-## Data access
+## Execution
 
-All three cohorts are public and de-identified; no new data collection was
-performed.
+```bash
+bash reproduce.sh
+```
+
+runs the full pipeline end-to-end (~45 min; the simulation study is the
+slow part) and writes every CSV behind Tables I--III and Figures 1--3.
+To rebuild the paper PDF:
+
+```bash
+cd bmib_hs
+tectonic -X compile main.tex
+```
+
+Expected output: exactly 5 pages, 0 errors, 0 overfull warnings.
+
+## Directory tree
+
+```
+.
+├── bmib_hs/                  # BIBM UGHS paper (main.tex, main.pdf, figures/)
+│   └── figures/              # fig1_auroc.png, fig2_cons_col.png,
+│                             # fig3_regime_col.png (generated)
+├── src/                      # all analysis code (see reproduce.sh)
+├── data/
+│   ├── raw/                  # the three public cohort files as downloaded
+│   └── processed/            # harmonized feature/label files (precomputed)
+├── results/                  # every CSV behind the tables and figures
+├── reproduce.sh              # one-shot pipeline
+├── requirements.txt          # pinned dependencies
+├── LICENSE                   # MIT
+└── README.md
+```
+
+## Data availability
+
+All three cohorts are public and de-identified by their originators; no new
+data collection was performed. The raw files ship in `data/raw/` exactly as
+published (they are not downloaded automatically):
 
 | Cohort | Role | Repository | URL |
 |---|---|---|---|
@@ -50,82 +83,25 @@ performed.
 | West China (n = 380; 188 cancer / 192 benign cysts) | external (co-primary) | figshare | https://doi.org/10.6084/m9.figshare.28831256 |
 | Japan (n = 177; 27 cancer / 150 healthy) | specificity stress test | Karger figshare | https://doi.org/10.6084/m9.figshare.24235450 |
 
-Download the files into `data/raw/` (the repository already contains them);
-`data/processed/` holds the harmonized feature/label files produced by the
-preprocessing step below.
-
-## How to Reproduce
-
-All commands run from the repository root. The full pipeline takes ~45
-minutes, dominated by the simulation study (~25 min) and repeated
-cross-validation (~10 min). A one-shot driver is `bash reproduce.sh`; the
-individual steps are:
-
-### 1. Preprocessing (raw → processed)
-
-`data/processed/` ships precomputed with the repository (the exact files
-used for every number in the paper):
-
-```bash
-python src/clean_data.py      # raw Chinese CSV -> chinese_train_cleaned.csv
-python src/impute_data.py     # class-stratified KNN imputation
-```
-
-### 2. Numerical results behind the tables
-
-```bash
-# Table II, West (imputed) and Japan columns + pairwise bootstrap tests
-python src/clinical_comparators.py
-
-# Internal validity: repeated 5-fold CV, selection stability, nested CV
-python src/repeated_cv.py
-
-# Pooled random-effects meta-analysis (scorecard-vs-ROMA +0.043 comparison)
-python src/meta_analysis.py
-
-# Brier scores and calibration-in-the-large
-python src/calibration_metrics.py
-
-# Weighted-harm decision analysis (Table III base)
-python src/decision_harm_analysis.py
-
-# Robustness: noise types, outliers, learning curves
-python src/robustness_extended.py
-
-# Simulation study: regime-map data + factor decomposition (~25 min)
-python src/simulation_study.py
-
-# Setting B tree tuning grid (nested CV)
-python src/tree_tuning_grid.py
-
-# BIBM-specific artifacts: complete-case CIs, Setting B ensembles, MICE
-# sensitivity, recalibrated-formula harms, probability-scale calibration
-# slopes/ECE, and Figures 1-3 in bmib_hs/figures/
-python src/make_bmib_artifacts.py
-```
-
-### 3. Paper
-
-```bash
-cd bmib_hs
-tectonic -X compile main.tex
-```
-
-Expected output: exactly 5 pages (the UGHS high-school limit), 0 errors,
-0 overfull warnings, two-column IEEE conference layout.
+`data/processed/` contains the harmonized four-feature files used for every
+analysis; `src/clean_data.py` and `src/impute_data.py` regenerate them from
+the raw files.
 
 ## Table/Figure mapping
 
 | Paper item | Produced by |
 |---|---|
-| Table I (integer scorecard) | fitted by `src/bench_lib.py`; bins in `bmib_hs/main.tex` |
-| Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` (West CC and Setting B columns) |
-| Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` (recalibrated formulas) |
-| Figure 1 (complete-case forest plot) | `src/make_bmib_artifacts.py` |
-| Figure 2 (decision curve analysis) | `src/make_bmib_artifacts.py` |
-| Figure 3 (regime map) | `src/simulation_study.py` + `src/make_bmib_artifacts.py` |
+| Table I (integer scorecard) | fitted by `src/bench_lib.py` |
+| Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
+| Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
+| Figures 1--3 | `src/make_bmib_artifacts.py` (+ `src/simulation_study.py` for Fig. 3 data) |
 | Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` |
 | MICE sensitivity | `src/make_bmib_artifacts.py` → `results/bmib_mice.csv` |
+
+## Review policy
+
+The BIBM 2026 UGHS review process is single-blind (reviewers anonymous,
+authors visible), so public attribution in this repository is permitted.
 
 ## License and citation
 

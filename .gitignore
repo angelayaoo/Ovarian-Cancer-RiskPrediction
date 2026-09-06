@@ -1,3 +1,12 @@
 .DS_Store
 catboost_info/
 __pycache__/
+.venv/
+venv/
+.conda/
+.ipynb_checkpoints/
+*.pyc
+*.aux
+*.log
+*.synctex.gz
+*.out
