@@ -5,7 +5,7 @@
 **Vritika S Sharma** (Issaquah High School, Issaquah, WA, USA)
 
 Submission to the IEEE BIBM 2026 Undergraduate & High School Symposium
-(UGHS), IEEE conference format, 5 pages.
+(UGHS)
 
 ## Overview
 
