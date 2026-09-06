@@ -1,33 +1,36 @@
 #!/usr/bin/env bash
-# One-shot reproduction of all numbers and figures for the ML4H 2026 paper.
+# One-shot reproduction of all numbers and figures for the IEEE BIBM 2026
+# Undergraduate & High School Symposium paper (bmib_hs/main.tex).
 # Run from the repository root. Runtime ~45 min (simulation is the slow part).
 set -euo pipefail
 
-echo "[1/9] clinical comparators (Table 1 + noise grid)"
+echo "[1/9] clinical comparators (Table II West/Japan columns, pairwise tests)"
 python src/clinical_comparators.py
 
-echo "[2/9] repeated CV + selection stability + nested CV"
+echo "[2/9] repeated CV + selection stability + nested CV (Section III-E)"
 python src/repeated_cv.py
 
-echo "[3/9] meta-analytic pooling (Table 2)"
+echo "[3/9] meta-analytic pooling (pooled +0.043 comparison)"
 python src/meta_analysis.py
 
-echo "[4/9] calibration, PR-AUC, NRI/IDI"
+echo "[4/9] calibration, Brier, calibration-in-the-large"
 python src/calibration_metrics.py
 
-echo "[5/9] weighted-harm decision analysis (Table 3)"
+echo "[5/9] weighted-harm decision analysis (Table III base)"
 python src/decision_harm_analysis.py
 
-echo "[6/9] DCA with bootstrap bands"
-python src/decision_analysis.py
-
-echo "[7/9] robustness experiments + learning curves"
+echo "[6/9] robustness experiments + learning curves"
 python src/robustness_extended.py
 
-echo "[8/9] simulation study (Table 4 + regime map, ~25 min)"
+echo "[7/9] simulation study (Fig. 3 + factor decomposition, ~25 min)"
 python src/simulation_study.py
 
-echo "[9/9] paper figures (Figures 1-5)"
-python src/make_ml4h_figures.py
+echo "[8/9] tree tuning grid (Setting B configurations)"
+python src/tree_tuning_grid.py
 
-echo "Done. Paper: cd paper && tectonic -X compile main.tex"
+echo "[9/9] BIBM-specific artifacts: complete-case CIs, Setting B ensembles,"
+echo "      MICE sensitivity, recalibrated harms, calibration slopes,"
+echo "      and Figures 1-3 in bmib_hs/figures/"
+python src/make_bmib_artifacts.py
+
+echo "Done. Compile the paper with: cd bmib_hs && tectonic main.tex"
