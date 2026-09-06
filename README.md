@@ -84,8 +84,8 @@ published (they are not downloaded automatically):
 | Japan (n = 177; 27 cancer / 150 healthy) | specificity stress test | Karger figshare | https://doi.org/10.6084/m9.figshare.24235450 |
 
 `data/processed/` contains the harmonized four-feature files used for every
-analysis; `src/clean_data.py` and `src/impute_data.py` regenerate them from
-the raw files.
+analysis; `src/clean_data.py` regenerates them byte-for-byte from the raw
+files.
 
 ## Table/Figure mapping
 
