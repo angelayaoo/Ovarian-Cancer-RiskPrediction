@@ -7,7 +7,7 @@ authors:
     given-names: "Zooey Lane Go"
   - family-names: "Sharma"
     given-names: "Vritika S"
-title: "External Validation of a Seven-Weight Scorecard versus Tree Ensembles in Ovarian Cancer Risk Prediction"
+title: "External Validation of an Interpretable Integer Scorecard versus Tree Ensembles for Ovarian Cancer Risk Prediction"
 version: 1.1.0
 date-released: 2026-09-06
 url: "https://github.com/angelayaoo/Ovarian-Cancer-RiskPrediction"

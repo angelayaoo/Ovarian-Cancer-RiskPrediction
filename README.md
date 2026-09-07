@@ -1,4 +1,4 @@
-﻿# External Validation of a Seven-Weight Scorecard versus Tree Ensembles in Ovarian Cancer Risk Prediction
+﻿# External Validation of an Interpretable Integer Scorecard versus Tree Ensembles for Ovarian Cancer Risk Prediction
 
 **Jiayi Yao** (BASIS Independent Bellevue, Bellevue, WA, USA),
 **Zooey Lane Go Hua** (Issaquah High School, Issaquah, WA, USA),
@@ -17,8 +17,8 @@ a Japanese cohort (n = 177) used as a specificity stress test.
 Complete-case (measured-HE4, n = 100) primary and imputed
 sensitivity external benchmarks, paired West China comparisons,
 weighted-harm decision analysis, calibration reporting, robustness
-experiments, and an illustrative concept-drift simulation show that a
-seven-weight integer scorecard performs no worse than the complex
+experiments, and an illustrative concept-drift simulation show that an
+interpretable integer scorecard performs no worse than the complex
 models' discrimination on these small cohorts while remaining
 transparent, auditable, and computable by hand.
 
@@ -118,8 +118,8 @@ this work:
 
 ```bibtex
 @software{ovarian_complexity_transportability,
-  title = {External Validation of a Seven-Weight Scorecard versus Tree
-           Ensembles in Ovarian Cancer Risk Prediction},
+  title = {External Validation of an Interpretable Integer Scorecard
+           versus Tree Ensembles for Ovarian Cancer Risk Prediction},
   year = {2026}
 }
 ```
