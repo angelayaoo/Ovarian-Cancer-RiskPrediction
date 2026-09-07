@@ -84,8 +84,8 @@ patient populations differ.
 
 Three public, anonymized datasets were used
 \cite{dataset1,dataset2,machida2023}. They are the only public,
-de-identified cohorts recording preoperative CA125 and HE4 with
-confirmed diagnoses; the cohorts are a training cohort from Changzhou,
+de-identified cohorts with CA125, HE4, and confirmed diagnoses; they
+are a training cohort from Changzhou,
 Jiangsu, China (349 patients; 171 ovarian cancers, 178 benign masses;
 Mendeley Data, doi:10.17632/th7fztbrv9.11, released with the study
 ``Using machine learning to predict ovarian cancer''), a second Chinese
@@ -95,20 +95,25 @@ figshare, doi:10.6084/m9.figshare.28831256, collected 2024), and a
 Japanese cohort from a university hospital in Japan (177 patients; 27
 cancers, 150 healthy women; Karger figshare,
 doi:10.6084/m9.figshare.24235450, supplement to
-\cite{machida2023}, 2016--2018). The two Chinese cohorts
-are surgical series of women with pelvic masses; the Japanese cohort
-contains healthy volunteers. Each patient has four features: CA125
-(U/mL), HE4 (pmol/L), age, and menopausal status. In West China, HE4 was
-not measured for 74\% of patients; in Japan, age was not recorded for
-85\%. Missing external
-values were replaced with the training-set median, computed once and
-frozen, so that no statistic is ever computed on a validation cohort.
+\cite{machida2023}, 2016--2018). Each patient has four features:
+CA125
+(U/mL), HE4 (pmol/L), age, and menopausal status. The source files are
+\texttt{chinese training dataset(All Raw Data).csv},
+\texttt{west\_china.xlsx} (Ovarian Cancer and Ovarian Cysts sheets),
+and \texttt{japanese.xlsx} (Healthy women and Patients sheets);
+\texttt{src/clean\_data.py} harmonizes them into the three processed
+files used by every analysis. In the training cohort,
+scattered missing biomarker values were filled by each feature's
+cohort median. Externally, HE4 was not measured for 74\% of West China
+patients and age was not recorded for 85\% of Japan patients; these
+external gaps were filled with the training-set medians, computed once
+and frozen, so that no statistic is ever computed on a validation
+cohort.
 The Japanese cohort is a healthy-volunteer population (cancer
 prevalence 15\%, 27 of 177), unlike the surgical cohorts (near 50\%). It is therefore treated strictly as a specificity
 stress test, not as external validation of the triage tool: AUROC is
-reported separately, no decision-consequence analysis is performed
-there, and its metrics are never pooled with West China's to support
-clinical claims. The primary
+reported separately, and its metrics are never pooled with West
+China's to support clinical claims. The primary
 West China analyses use the 100 patients with measured HE4 (63 cancers,
 37 benign), so that the external result rests on measured biology rather
 than imputed constants; the 280 excluded patients (125 cancers, 155
@@ -131,8 +136,7 @@ points (range $-7$ to $+9$), can be computed by hand
 one intercept that is not used in scoring). Its weights match pathophysiology: HE4 spans $-4$ to $+5$ versus
 $-1$ to $+2$ for CA125, matching HE4's higher cancer specificity and
 CA125's elevation in endometriosis; older age adds points.
-The configuration was selected among 12 candidates by repeated
-cross-validation (Section~\ref{sec:internal}). The regularized fit assigned the binary menopausal feature a
+ The regularized fit assigned the binary menopausal feature a
 coefficient that rounded to zero, so it is effectively dropped; it was
 not manually removed, and its row in Table~\ref{tab:score} is retained
 to document this.
@@ -207,9 +211,16 @@ are hypothetical scenarios, not validated clinical utilities: they span from val
 unnecessary referral equally ($w=1$) to valuing a missed cancer 50 times
 as much ($w=50$). These analyses are intended to characterize sensitivity
 to different relative error costs rather than to establish clinical
-utility. The primary comparison applies the same within-cohort
-recalibration to every model; published-cutpoint operating points are
-reported separately as a secondary, off-the-shelf comparison. Pooling was limited to
+utility. All design choices preceded external evaluation: the four features
+are those common to the cohorts and required by the published formulas;
+the eight models span the complexity spectrum; the primary comparison
+(scorecard versus ROMA, pooled) and the four weights were pre-specified;
+only the scorecard's bin count and regularization were selected among
+12 pre-specified candidates by repeated CV
+(Section~\ref{sec:internal}). The primary comparison applies
+the same within-cohort recalibration to every model;
+published-cutpoint operating points are reported separately as a
+secondary, off-the-shelf comparison. Pooling was limited to
 discrimination metrics across the two external cohorts; no pooled
 decision analysis was performed.
 The retraining experiment used stratified training subsets of size
@@ -358,8 +369,8 @@ with treat-all (dashed) and treat-none (the horizontal axis)
 references; the shaded band marks the published-cutpoint range
 (7--30\%). The
 scorecard and the two formulas are shown after within-cohort
-recalibration. XGBoost is omitted; uncertainty bands are omitted;
-minimum harms are in Table~\ref{tab:harm}.}
+recalibration. XGBoost is omitted; minimum harms are in
+Table~\ref{tab:harm}.}
 \label{fig:cons}
 \end{figure}
 
