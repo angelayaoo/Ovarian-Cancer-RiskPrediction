@@ -65,9 +65,9 @@ hospitals~\cite{kawakami2019,christodoulou2019,wynants2020}.
 
 Lu et al.~\cite{lu2020} trained machine-learning models on the
 Changzhou cohort reused here, selecting HE4 and CEA for a decision
-tree that outperformed ROMA and logistic regression on a held-out
+tree that beat ROMA and logistic regression on a held-out
 split. Our work adds a hand-computable scorecard, applies every model
-frozen to two Asian cohorts unseen during training, and asks how much
+frozen to two Asian cohorts, and asks how much
 of such an advantage survives the move to a new hospital.
 
 This paper asks two linked questions. First, does model complexity
@@ -125,8 +125,8 @@ benign) had similar age, CA125, and menopausal rates.
 \subsection{Sensitivity to Missing Biomarkers}
 
 The primary external benchmark uses the 100 West China patients with
-measured HE4. The 74\%-imputed full cohort ($N=380$) is reported
-alongside as a sensitivity analysis, because median imputation may
+measured HE4. The 74\%-imputed full cohort ($N=380$) is reported as a
+sensitivity analysis, because median imputation may
 alter model discrimination; no-HE4 refits and MICE AUROCs bound this
 effect (Section~\ref{sec:calibration}).
 
@@ -218,23 +218,21 @@ are hypothetical scenarios, not validated clinical utilities: they span from val
 unnecessary referral equally ($w=1$) to valuing a missed cancer 50 times
 as much ($w=50$), characterizing sensitivity to relative error costs
 rather than establishing clinical
-utility. All design choices preceded external evaluation: the four features
+utility. All design choices preceded external evaluation: the features
 are those common to the cohorts and required by the published formulas;
 the primary comparison
-(scorecard versus ROMA, pooled) and the four weights were pre-specified;
+and the four weights were pre-specified;
 only the scorecard's bin count and regularization were selected among
-12 pre-specified candidates by repeated CV
+12 candidates by repeated CV
 (Section~\ref{sec:internal}). The primary comparison applies
 the same within-cohort recalibration to every model; published-cutpoint
-operating points are reported separately. Pooling was limited to
-discrimination metrics across the two external cohorts; no pooled
-decision analysis was performed.
-The retraining experiment used stratified training subsets of size
-$n\in\{60,90,120,180,240,349\}$ (10 draws each), with models evaluated
-unchanged on the imputed West China cohort ($N=380$). Robustness was tested with 10\% and 30\%
-multiplicative, additive, and combined measurement noise on CA125 and HE4,
-5\% gross-error contamination, and $\pm10\%$ shifts of the scorecard's
-bin boundaries.
+operating points are reported separately; pooling was limited to
+discrimination, with no pooled decision analysis.
+The retraining experiment used stratified training subsets ($n=60$
+to 349, 10 draws each), evaluated unchanged on the imputed West China
+cohort. Robustness was tested with 10\% and 30\%
+multiplicative, additive, and combined noise, 5\% gross-error
+contamination, and $\pm10\%$ bin-boundary shifts.
 
 \subsection{Implementation and availability}
 
@@ -292,7 +290,7 @@ ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
 As a discrimination benchmark, a random-effects
 (DerSimonian--Laird) meta-analysis with paired bootstrap tests across
 the two external cohorts gave a pooled scorecard-minus-ROMA difference
-of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$). It also exceeded every tree ensemble (all $p$ at most 0.002) and
+of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$); the scorecard also exceeded every tree ensemble (all $p\le0.002$) and
 did not differ from the logistic regression ($-0.005$; $p=0.55$). After
 Holm--Bonferroni correction, the scorecard--ROMA difference remained
 significant (adjusted $p=0.012$), as did the ensemble comparisons ($p$
@@ -335,8 +333,9 @@ Random Forest & \shortstack{0.930\\[-0.5ex]{\scriptsize(0.871--0.979)}} & \short
 \centering
 \includegraphics[width=\columnwidth]{figures/fig1_auroc}
 \caption{External validation AUROC, 100 West China patients with
-measured HE4 (63 cancers). Dots: bootstrap means with 95\% CIs (2{,}000
-resamples).}
+measured HE4 (63 cancers); whiskers: bootstrap 95\% CIs. Label colors:
+green $=$ linear models, red $=$ clinical formulas, orange $=$ tuned
+trees, grey $=$ simple rule.}
 \label{fig:ladder}
 \end{figure}
 
@@ -344,7 +343,7 @@ resamples).}
 \label{sec:results}
 
 In the primary weighted-harm analysis (Q2; Table~\ref{tab:harm},
-Figure~\ref{fig:cons}), every model was within-cohort recalibrated. The scorecard's minimum harm was below
+Fig.~\ref{fig:cons}), every model was within-cohort recalibrated. The scorecard's minimum harm was below
 recalibrated ROMA and CPH-I at weights up to 5 (12.1
 vs.\ 14.7 and 15.0 at $w=1$); at $w=50$, both recalibrated formulas
 fell below it (ROMA 45.8, CPH-I 50.3, vs.\ 59.5). The
@@ -407,9 +406,9 @@ formulas at published scales. Because the scorecard's fitting and
 evaluation share the cohort, these are apparent-calibration
 figures, not prospective ones, and only its figures can be inflated by
 the shared data.
-The recalibrated scorecard had Brier 0.097, a probability-scale
-calibration slope of 1.00, and expected calibration error (ECE) of
-0.042; the logistic regression had Brier 0.111, slope 1.44, and ECE
+The recalibrated scorecard had Brier 0.097, calibration slope
+1.00, and expected calibration error (ECE) 0.042; the logistic regression
+had Brier 0.111, slope 1.44, and ECE
 0.135. The published
 formulas were farther from the data: ROMA had Brier 0.209, slope 1.53,
 and ECE 0.220; CPH-I had Brier 0.259, slope 1.11, and ECE 0.303. Both
