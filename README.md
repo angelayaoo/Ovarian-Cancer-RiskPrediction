@@ -60,7 +60,7 @@ Expected output: 5 pages, no errors, no overfull warnings.
 
 ```
 .
-├── bmib_hs/                  # BIBM UGHS paper (main.tex, main.pdf, figures/)
+├── bmib_hs/                  # BIBM UGHS paper (main.tex, OvarianCancerRiskStratification.pdf, figures/)
 │   └── figures/              # fig1_auroc.png, fig2_cons.png,
 │                             # fig3_regime_col.png (generated)
 ├── src/                      # all analysis code (see reproduce.sh)

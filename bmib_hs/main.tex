@@ -70,7 +70,8 @@ trained on but little testing at other
 hospitals~\cite{kawakami2019,christodoulou2019,wynants2020}.
 
 Lu et al.~\cite{lu2020} trained machine-learning models on the
-Changzhou cohort reused here, selecting HE4 and CEA for a decision
+Changzhou cohort reused here, selecting HE4 and carcinoembryonic
+antigen (CEA) for a decision
 tree that beat ROMA and logistic regression on a held-out
 split. Our work adds a hand-computable scorecard, applies every model
 frozen to two Asian cohorts, and asks how much
@@ -131,8 +132,8 @@ benign) had similar age, CA125, and menopausal rates.
 
 The 74\%-imputed cohort ($N=380$) is a sensitivity
 analysis: median imputation may
-alter discrimination, and no-HE4 refits and MICE AUROCs bound
-this effect (Section~\ref{sec:calibration}).
+alter discrimination, and no-HE4 refits and multiply imputed AUROCs
+bound this effect (Section~\ref{sec:calibration}).
 
 \subsection{Models}\label{sec:models}
 
@@ -209,7 +210,7 @@ comparison is the scorecard versus ROMA on the 100 complete cases; the
 same comparisons on the 74\%-imputed cohort are sensitivity analyses.
 All other comparisons are secondary, and effect sizes with
 95\% CIs are emphasized over p-values, with Holm--Bonferroni adjustment
-across the six comparisons of Section~\ref{sec:results}.
+across the six comparisons of Section~\ref{sec:discrimination}.
 Calibration was measured with the Brier
 score and calibration-in-the-large~\cite{vancalster2019}. Decision value was quantified with a weighted-harm analysis
 (Section~\ref{sec:results})~\cite{vickers2006}: decision thresholds were swept over 1--100\%,
@@ -283,7 +284,7 @@ levels $d\in\{0,1\}$, with
 
 \section{Results}
 
-\subsection{Discrimination}
+\subsection{Discrimination}\label{sec:discrimination}
 
 On the 100 West China patients with measured HE4 (63 cancers), the
 scorecard was numerically highest, with ROMA, tuned XGBoost, and the
@@ -496,10 +497,10 @@ discrimination is not directly comparable with West China's; both
 narrow how broadly the findings apply. (iii) ultrasound-based models could not be tested (no imaging in the public
 data); (iv) the simulation is a simplification, not a
 proof about any specific hospital.
-
 Future work should add ultrasound variables and validate
 prospectively in larger cohorts; on these small cohorts
-the scorecard already performed no worse than far more complex models.
+the scorecard already showed discrimination comparable to or better
+than far more complex models.
 
 \section*{Acknowledgment}
 The authors acknowledge the use of Google Gemini, an AI-based
