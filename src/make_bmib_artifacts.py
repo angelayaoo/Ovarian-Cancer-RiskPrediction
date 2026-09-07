@@ -205,7 +205,7 @@ def main():
             ('Scorecard', 'Scorecard'), ('Logistic regression', 'Raw LR'),
             ('CatBoost', 'CatBoost'), ('XGBoost', 'XGBoost'),
             ('Random forest', 'Random Forest')]
-    fig, ax = plt.subplots(figsize=(3.5, 2.55))
+    fig, ax = plt.subplots(figsize=(3.5, 2.7))
     ys = np.arange(len(rows))
     for y, (disp, key) in zip(ys, rows):
         if key in tuned:
@@ -245,7 +245,7 @@ def main():
     ax.legend(handles=handles, loc='upper center',
               bbox_to_anchor=(0.5, -0.08), ncol=2, fontsize=8.5,
               frameon=False, columnspacing=0.9, handletextpad=0.3)
-    fig.subplots_adjust(left=0.34, right=0.97, top=0.97, bottom=0.30)
+    fig.subplots_adjust(left=0.38, right=0.97, top=0.97, bottom=0.28)
     fig.savefig(os.path.join(HS_DIR, 'fig1_auroc.png'),
                 bbox_inches='tight', pad_inches=0.06, dpi=300)
     plt.close(fig)
@@ -278,7 +278,7 @@ def main():
               'ROMA (recal.)': '-.', 'CPH-I (recal.)': ':'}
     ts = np.linspace(0.01, 0.99, 200)
     prev = float(np.mean(y_w))
-    fig, ax = plt.subplots(figsize=(3.5, 2.3))
+    fig, ax = plt.subplots(figsize=(3.5, 2.6))
     ax.axvspan(7, 30, color='#f2f2f2', zorder=0)
     for mname, p in dca_probs.items():
         nb = nb_curve(y_w, p, ts)
@@ -297,7 +297,7 @@ def main():
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14), ncol=3,
               fontsize=8.5, frameon=False, columnspacing=1.1,
               handletextpad=0.35)
-    fig.subplots_adjust(left=0.15, right=0.97, top=0.97, bottom=0.27)
+    fig.subplots_adjust(left=0.16, right=0.97, top=0.97, bottom=0.30)
     fig.savefig(os.path.join(HS_DIR, 'fig2_cons_col.png'),
                 bbox_inches='tight', pad_inches=0.08, dpi=300)
     plt.close(fig)
