@@ -205,7 +205,7 @@ def main():
             ('Scorecard', 'Scorecard'), ('Logistic regression', 'Raw LR'),
             ('CatBoost', 'CatBoost'), ('XGBoost', 'XGBoost'),
             ('Random forest', 'Random Forest')]
-    fig, ax = plt.subplots(figsize=(3.5, 2.7))
+    fig, ax = plt.subplots(figsize=(3.5, 2.55))
     ys = np.arange(len(rows))
     for y, (disp, key) in zip(ys, rows):
         if key in tuned:
@@ -278,7 +278,7 @@ def main():
               'ROMA (recal.)': '-.', 'CPH-I (recal.)': ':'}
     ts = np.linspace(0.01, 0.99, 200)
     prev = float(np.mean(y_w))
-    fig, ax = plt.subplots(figsize=(3.5, 2.4))
+    fig, ax = plt.subplots(figsize=(3.5, 2.3))
     ax.axvspan(7, 30, color='#f2f2f2', zorder=0)
     for mname, p in dca_probs.items():
         nb = nb_curve(y_w, p, ts)
@@ -311,7 +311,7 @@ def main():
                           columns='Model', values='Test AUROC mean')
     piv['ens'] = (piv['XGBoost'] + piv['CatBoost'] + piv['Random Forest']) / 3
     norm = TwoSlopeNorm(vmin=-0.10, vcenter=0.0, vmax=0.10)
-    fig, axes = plt.subplots(1, 2, figsize=(6.16, 2.8))
+    fig, axes = plt.subplots(1, 2, figsize=(6.16, 2.7))
     for ax, drift, lab in zip(axes, [0.0, 1.0],
                               ['(a) Stationary structure',
                                '(b) Concept drift']):
