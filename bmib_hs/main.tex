@@ -364,13 +364,13 @@ minimum harms are in Table~\ref{tab:harm}.}
 \end{figure}
 
 \begin{table}[!t]
-\caption{Minimum net harm per 100 women on West China ($N=380$) at
-each exchange-rate weight $w$ (harm of one missed cancer relative to one
-unnecessary referral; harm $=w\times$missed$+$unnecessary). Lower is
-better. The scorecard, ROMA, and CPH-I are within-cohort recalibrated;
-the logistic regression and XGBoost are shown as fitted.
-Published-scale harms: ROMA 15.0/43.4/45.8/45.8; CPH-I
-15.0/51.3/64.7/159.5.}
+\caption{Minimum net harm on West China ($N=380$), in harm points
+per 100 women, at each exchange-rate weight $w$: harm $=w\times$
+(missed cancers per 100 women) $+$ (unnecessary referrals per 100
+women), minimized over thresholds. Lower is better. Q2 rows: scorecard,
+ROMA, and CPH-I are within-cohort recalibrated; the logistic regression
+and XGBoost are shown as fitted. Q1 published-scale harms: ROMA
+15.0/43.4/45.8/45.8; CPH-I 15.0/51.3/64.7/159.5.}
 \label{tab:harm}
 \centering
 \begin{tabular}{lcccc}
@@ -537,7 +537,6 @@ epididymis protein 4 enhances its use as an ovarian tumor marker,''
 AUROC: area under the receiver operating characteristic curve; CA125:
 cancer antigen 125 (U/mL); HE4: human epididymis protein 4 (pmol/L);
 ROMA: Risk of Ovarian Malignancy Algorithm; CPH-I: Copenhagen Index;
-CI: confidence interval; CV: cross-validation; ECE: expected
-calibration error; DCA: decision curve analysis.
+ECE: expected calibration error; DCA: decision curve analysis.
 
 \end{document}
