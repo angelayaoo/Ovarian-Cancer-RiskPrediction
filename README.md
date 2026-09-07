@@ -14,13 +14,13 @@ logistic regression, a hand-computable integer scorecard, and three tree
 ensembles) are trained once on a Chinese cohort (Changzhou, n = 349) and
 applied unchanged to a second Chinese cohort (West China, n = 380) and to
 a Japanese cohort (n = 177) used as a specificity stress test.
-Complete-case (measured-HE4, n = 100) and imputed co-primary external
-benchmarks, a random-effects meta-analysis, weighted-harm decision
-analysis, calibration reporting, robustness experiments, and an
-illustrative concept-drift simulation show that a seven-weight integer
-scorecard performs no worse than the complex models' discrimination on
-these small cohorts while remaining transparent, auditable, and
-computable by hand.
+Complete-case (measured-HE4, n = 100) primary and imputed
+sensitivity external benchmarks, a random-effects meta-analysis,
+weighted-harm decision analysis, calibration reporting, robustness
+experiments, and an illustrative concept-drift simulation show that a
+seven-weight integer scorecard performs no worse than the complex
+models' discrimination on these small cohorts while remaining
+transparent, auditable, and computable by hand.
 
 ## Environment setup
 
@@ -61,7 +61,7 @@ Expected output: 5 pages, no errors, no overfull warnings.
 ```
 .
 ├── bmib_hs/                  # BIBM UGHS paper (main.tex, main.pdf, figures/)
-│   └── figures/              # fig1_auroc.png, fig2_cons_col.png,
+│   └── figures/              # fig1_auroc.png, fig2_cons.png,
 │                             # fig3_regime_col.png (generated)
 ├── src/                      # all analysis code (see reproduce.sh)
 ├── data/
@@ -86,7 +86,7 @@ published (they are not downloaded automatically):
 | Cohort | Role | Repository | URL |
 |---|---|---|---|
 | Chinese (n = 349; 171 cancer / 178 benign) | training | Mendeley Data | https://doi.org/10.17632/th7fztbrv9.11 |
-| West China (n = 380; 188 cancer / 192 benign cysts) | external (co-primary) | figshare | https://doi.org/10.6084/m9.figshare.28831256 |
+| West China (n = 380; 188 cancer / 192 benign cysts) | external (sensitivity) | figshare | https://doi.org/10.6084/m9.figshare.28831256 |
 | Japan (n = 177; 27 cancer / 150 healthy) | specificity stress test | Karger figshare | https://doi.org/10.6084/m9.figshare.24235450 |
 
 `data/processed/` contains the harmonized four-feature files used for every
