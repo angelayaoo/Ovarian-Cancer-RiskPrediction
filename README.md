@@ -23,8 +23,8 @@ transparent, auditable, and computable by hand.
 ## Environment setup
 
 ```bash
-git clone https://github.com/angelayaoo/Ovarian-Cancer-RiskSLIM.git
-cd Ovarian-Cancer-RiskSLIM
+git clone https://github.com/angelayaoo/Ovarian-Cancer-RiskPrediction.git
+cd Ovarian-Cancer-RiskPrediction
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
