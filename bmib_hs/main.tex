@@ -238,13 +238,14 @@ bin boundaries.
 
 \subsection{Implementation and availability}
 
-Analyses used Python 3.13 with scikit-learn 1.7.2, XGBoost 3.3.0 (100
-trees, depth 6, learning rate 0.3), CatBoost 1.2.10 (1{,}000 iterations,
-depth 6, learning rate 0.03), and Random Forest (100 trees, no depth
-cap), all with random seed 42; cross-validation used stratified
-five-fold splits, and the simulation used 20 replicates per condition.
-The parenthetical configurations are Setting A package defaults; Setting B used the nested-CV-selected configurations of
-Section~\ref{sec:models}. All preprocessing, model fitting, evaluation,
+Analyses used Python 3.13 with scikit-learn 1.7.2, XGBoost 3.3.0,
+CatBoost 1.2.10, and Random Forest, all with random seed 42;
+cross-validation used stratified five-fold splits, and the simulation
+used 20 replicates per condition. Setting A (package defaults):
+XGBoost 100 trees, depth 6, learning rate 0.3; CatBoost 1{,}000
+iterations, depth 6, learning rate 0.03; Random Forest 100 trees, no
+depth cap. Setting B (primary): the nested-CV-selected configurations
+of Section~\ref{sec:models}. All preprocessing, model fitting, evaluation,
 figures, and sensitivity analyses are implemented in a reproducible
 pipeline (\texttt{reproduce.sh}) with pinned dependencies and a fixed
 random seed, available at
@@ -456,8 +457,8 @@ selected in 18 of 20 repeats. In-sample the ensembles fitted at
 
 The results show three things. First, on discrimination: greater model
 complexity did not consistently yield better external performance;
-seven integer parameters were not distinguishable from models
-with thousands of parameters---the scorecard was
+seven integer parameters achieved external discrimination comparable
+to, or better than, substantially more complex models---the scorecard was
 numerically best on the complete cases (0.971), the logistic regression
 was highest on the imputed cohort (0.936 vs.\
 0.929), and CPH-I won the Japan stress test (0.920). Second, on
