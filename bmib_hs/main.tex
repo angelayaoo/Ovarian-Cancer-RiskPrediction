@@ -50,10 +50,9 @@ transportability
 
 Ovarian cancer is the most lethal gynecologic cancer: it causes over
 200{,}000 deaths per year worldwide, most cases are found late, and
-screening has not reduced deaths. When a pelvic mass is found, the
-decision of whether to send the patient to a specialist cancer surgeon
-depends on preoperative risk, and getting it wrong in either direction is
-costly. That decision currently relies on two blood proteins that ovarian
+screening has not reduced deaths. When a pelvic mass is found, whether to send the patient to a
+specialist cancer surgeon depends on preoperative risk, and getting it
+wrong in either direction is costly. That decision currently relies on two blood proteins that ovarian
 tumors release into the bloodstream; both are measured cheaply and
 routinely before surgery, and the open question is how to combine the
 two measurements into one trustworthy risk number. The markers are
@@ -109,8 +108,7 @@ patients and age was not recorded for 85\% of Japan patients; these
 external gaps were filled with the training-set medians, computed once
 and frozen, so that no statistic is ever computed on a validation
 cohort.
-The Japanese cohort is a healthy-volunteer population (cancer
-prevalence 15\%, 27 of 177), unlike the surgical cohorts (near 50\%). It is therefore treated strictly as a specificity
+The Japanese cohort is therefore treated strictly as a specificity
 stress test, not as external validation of the triage tool: AUROC is
 reported separately, and its metrics are never pooled with West
 China's to support clinical claims. The primary
@@ -274,10 +272,9 @@ measurement noise $\{0\%,50\%\}$, and drift levels $d\in\{0,1\}$, with
 \subsection{Discrimination}
 
 On the 100 West China patients with measured HE4 (63 cancers), the
-scorecard scored 0.971, ROMA 0.965, tuned XGBoost 0.946, and the
-logistic regression 0.941, with overlapping intervals; the remaining
-models were lower (Table~\ref{tab:auroc}, West CC column;
-Fig.~\ref{fig:ladder}).
+scorecard was numerically highest, with ROMA, tuned XGBoost, and the
+logistic regression within overlapping CIs; the rest were lower
+(Table~\ref{tab:auroc}, West CC column; Fig.~\ref{fig:ladder}).
 
 On the co-primary 74\%-imputed full cohort ($N=380$), the ranking
 was similar (logistic regression 0.936, scorecard 0.929, tuned
@@ -301,9 +298,8 @@ fell into the lowest bins of both markers.
 
 Per-feature Kolmogorov--Smirnov shifts from the training
 distribution averaged 0.22 (West China) and 0.50 (Japan). The West
-China cohort had higher CA125 (median 65.1 versus 49.3 U/mL) than the
-training patients, and the Japanese volunteers had far lower marker
-levels (CA125 15.1 U/mL, HE4 33.8 pmol/L).
+China cohort had higher CA125 (65.1 versus 49.3 U/mL), and the Japanese
+volunteers had far lower markers (CA125 15.1, HE4 33.8).
 
 \begin{table}[!t]
 \caption{AUROC (95\% CI) by model and cohort, bootstrap means over
@@ -378,7 +374,8 @@ Table~\ref{tab:harm}.}
 \caption{Minimum net harm on West China ($N=380$), in harm points
 per 100 women, at each exchange-rate weight $w$: harm $=w\times$
 (missed cancers per 100 women) $+$ (unnecessary referrals per 100
-women), minimized over thresholds. Lower is better. Q2 rows: scorecard,
+women), minimized over the swept threshold grid; treating everyone
+costs 50.5 at every weight. Lower is better. Q2 rows: scorecard,
 ROMA, and CPH-I are within-cohort recalibrated; the logistic regression
 and XGBoost are shown as fitted. Q1 published-scale harms: ROMA
 15.0/43.4/45.8/45.8; CPH-I 15.0/51.3/64.7/159.5.}
@@ -388,11 +385,12 @@ and XGBoost are shown as fitted. Q1 published-scale harms: ROMA
 \toprule
 Model & $w{=}1$ & $w{=}5$ & $w{=}10$ & $w{=}50$\\
 \midrule
-Logistic reg. & \textbf{9.7} & \textbf{29.2} & \textbf{39.7} & \textbf{46.6}\\
+Logistic reg. & \textbf{9.7} & \textbf{29.2} & \textbf{39.7} & 46.6\\
 Scorecard & 12.1 & 30.5 & 45.0 & 59.5\\
 ROMA (recalibrated) & 14.7 & 42.9 & 45.8 & \textbf{45.8}\\
 CPH-I (recalibrated) & 15.0 & 50.3 & 50.3 & 50.3\\
 XGBoost & 14.7 & 44.7 & 66.1 & 215.5\\
+Treat all (reference) & 50.5 & 50.5 & 50.5 & 50.5\\
 \bottomrule
 \end{tabular}
 \end{table}
