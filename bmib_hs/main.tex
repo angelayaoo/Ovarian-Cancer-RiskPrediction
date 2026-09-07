@@ -297,17 +297,12 @@ The West China cohort had higher CA125 (65.1 versus 49.3 U/mL), and
 the Japanese volunteers had far lower markers (CA125 15.1, HE4 33.8).
 
 \begin{table}[!t]
-\caption{AUROC (95\% CI) by model and cohort, bootstrap means over
-2{,}000 resamples. West CC: the 100 West China patients with measured
-HE4 (primary external benchmark); West: the full 74\%-imputed cohort
-($N=380$, co-primary analysis); Japan: healthy volunteers (specificity
-stress test). Setting A (defaults) ensembles scored 0.921/0.922/0.910
-(CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792 (Japan). Bold: highest per cohort, or indistinguishable from it.}
+\caption{AUROC (95\% CI) by model and cohort.}
 \label{tab:auroc}
 \centering
 \begin{tabular}{@{}lccc@{}}
 \toprule
-Model & West CC ($n{=}100$) & West ($N{=}380$) & Japan\\
+Model & West CC & West & Japan\\
 \midrule
 Scorecard & \textbf{\shortstack{0.971\\[-0.5ex]{\scriptsize(0.936--0.995)}}} & \textbf{\shortstack{0.929\\[-0.5ex]{\scriptsize(0.902--0.955)}}} & \shortstack{0.845\\[-0.5ex]{\scriptsize(0.714--0.949)}} \\
 Logistic reg. & \shortstack{0.941\\[-0.5ex]{\scriptsize(0.887--0.983)}} & \textbf{\shortstack{0.936\\[-0.5ex]{\scriptsize(0.908--0.961)}}} & \shortstack{0.806\\[-0.5ex]{\scriptsize(0.666--0.926)}} \\
@@ -319,6 +314,17 @@ CatBoost & \shortstack{0.910\\[-0.5ex]{\scriptsize(0.845--0.962)}} & \shortstack
 Random Forest & \shortstack{0.930\\[-0.5ex]{\scriptsize(0.871--0.979)}} & \shortstack{0.895\\[-0.5ex]{\scriptsize(0.858--0.931)}} & \shortstack{0.819\\[-0.5ex]{\scriptsize(0.692--0.926)}} \\
 \bottomrule
 \end{tabular}
+
+\vspace{-3pt}
+{\footnotesize AUROC: area under the receiver operating characteristic
+curve; CC: complete case; CI: confidence interval. West CC ($n{=}100$): the
+West China patients with measured HE4 (primary benchmark); West
+($N{=}380$): the 74\%-imputed cohort (co-primary); Japan ($n{=}177$):
+healthy volunteers (specificity stress test). Values are bootstrap means over 2{,}000 resamples. Tree
+ensembles are Setting B (nested-CV tuned); Setting A (defaults) scored
+0.921/0.922/0.910 (CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792
+(Japan). Bold: highest per cohort, or statistically indistinguishable
+from it.}
 \end{table}
 
 \begin{figure}[!t]
