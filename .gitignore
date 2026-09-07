@@ -10,3 +10,4 @@ venv/
 *.log
 *.synctex.gz
 *.out
+/figures/

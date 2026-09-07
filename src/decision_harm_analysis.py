@@ -11,6 +11,8 @@ compares models at that optimum.
 
 Outputs:
     results/decision_harm_tradeoff.csv
+    results/decision_consequences.csv
+    results/scorecard_operating_points.csv
     figures/fig6_consequence_curves.png
 """
 import os
@@ -115,6 +117,74 @@ def main():
     print(f"  Scorecard tier >= +1 : {sc_m:.1f}, {sc_u:.1f}")
     print(f"  ROMA cutpoints        : {roma_m:.1f}, {roma_u:.1f}")
     print(f"  CPH-I >= 7%           : {cphi_m:.1f}, {cphi_u:.1f}")
+
+    # operating-point tables for the paper (Q1 published-cutpoint comparison)
+    def sens_spec(pred):
+        pred = np.asarray(pred)
+        yv = np.asarray(y_w)
+        tp = float(np.sum((pred == 1) & (yv == 1)))
+        fp = float(np.sum((pred == 1) & (yv == 0)))
+        fn = float(np.sum((pred == 0) & (yv == 1)))
+        tn = float(np.sum((pred == 0) & (yv == 0)))
+        sens = tp / (tp + fn) if tp + fn > 0 else 0.0
+        spec = tn / (tn + fp) if tn + fp > 0 else 0.0
+        return sens, spec
+
+    n_cancers = int(np.sum(y_w == 1))
+    n_benign = int(np.sum(y_w == 0))
+    cons_rows = []
+    for name, pred in [
+            ('Scorecard high-risk tier (score >= +1)', s_w >= 1),
+            ('ROMA published cutoffs (13.1%/27.7%)', roma_rule),
+            ('CPH-I cutoff (>= 7%)', zoo['CPH-I'](X_w) * 100 >= CPHI_CUT),
+            ('CA125 >= 35 U/mL', X_w['CA125'].values >= 35.0)]:
+        pred = np.asarray(pred)
+        yv = np.asarray(y_w)
+        missed_cnt = int(np.sum((pred == 0) & (yv == 1)))
+        fp_cnt = int(np.sum((pred == 1) & (yv == 0)))
+        sens, spec = sens_spec(pred)
+        cons_rows.append({'Strategy': name,
+                          'Sensitivity': round(sens, 3),
+                          'Specificity': round(spec, 3),
+                          'Missed cancers per 100': round(
+                              missed_cnt / n_cancers * 100, 1),
+                          'Unnecessary referrals per 100': round(
+                              fp_cnt / n_benign * 100, 1)})
+    cons_rows.append({'Strategy': 'Treat all (reference)',
+                      'Sensitivity': 1.0,
+                      'Specificity': 0.0,
+                      'Missed cancers per 100': 0.0,
+                      'Unnecessary referrals per 100': round(
+                          n_benign / len(y_w) * 100, 1)})
+    cons_df = pd.DataFrame(cons_rows)
+    cons_df.to_csv(os.path.join(RESULTS_DIR, 'decision_consequences.csv'),
+                   index=False)
+    print("\ndecision_consequences.csv saved")
+
+    cut_rows = []
+    for cut in [-7, -6, -5, -4, -3, -2, -1, 0, 1, 3, 5, 7, 9]:
+        pred = s_w >= cut
+        n_ref = int(np.sum(pred))
+        sens, spec = sens_spec(pred)
+        ppv = float(np.sum((pred == 1) & (np.asarray(y_w) == 1)) / n_ref) \
+            if n_ref > 0 else float('nan')
+        n_neg = int(np.sum(pred == 0))
+        npv = float(np.sum((pred == 0) & (np.asarray(y_w) == 0)) / n_neg) \
+            if n_neg > 0 else float('nan')
+        lr_plus = sens / (1 - spec) if spec < 1 else float('inf')
+        lr_minus = (1 - sens) / spec if spec > 0 else float('inf')
+        cut_rows.append({'Cutpoint': cut,
+                         'N referred': n_ref,
+                         'Sensitivity': round(sens, 3),
+                         'Specificity': round(spec, 3),
+                         'PPV': round(ppv, 3) if not np.isnan(ppv) else '',
+                         'NPV': round(npv, 3) if not np.isnan(npv) else '',
+                         'LR+': 'inf' if np.isinf(lr_plus) else round(lr_plus, 2),
+                         'LR-': 'inf' if np.isinf(lr_minus) else round(lr_minus, 2)})
+    cut_df = pd.DataFrame(cut_rows)
+    cut_df.to_csv(os.path.join(RESULTS_DIR, 'scorecard_operating_points.csv'),
+                  index=False)
+    print("scorecard_operating_points.csv saved")
 
     # trade-off curves figure
     fig, ax = plt.subplots(figsize=(7.8, 6.0))

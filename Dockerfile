@@ -1,9 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ src/
-COPY data/processed/ data/processed/
+COPY data/ data/
+COPY reproduce.sh .
 
-CMD ["python", "src/run_monte_carlo_benchmarks.py"]
+CMD ["bash", "reproduce.sh"]

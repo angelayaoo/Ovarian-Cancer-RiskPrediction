@@ -2,10 +2,12 @@
 Meta-analytic pooling of external validation results.
 
 Random-effects (DerSimonian-Laird) pooling of AUROC differences between the
-scorecard and each comparator across the two external cohorts (West China,
-Japan), plus pooling of each model's own AUROC. Bootstrap-derived SEs from
-2,000 patient-level resamples per cohort. I-squared reported for
-heterogeneity.
+scorecard and each comparator across the two external cohorts (the imputed
+West China cohort and the Japanese stress-test cohort), plus pooling of each
+model's own AUROC. Bootstrap-derived SEs from 2,000 patient-level resamples
+per cohort. I-squared reported for heterogeneity. Tree ensembles use the
+Setting B (internally CV-tuned) configurations, matching the primary
+comparison in the paper.
 
 Outputs:
     results/meta_analysis.csv
@@ -21,6 +23,9 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bench_lib import (SEED, RESULTS_DIR, FIGURES_DIR, MODEL_COLORS, MODEL_LABELS,
@@ -59,6 +64,25 @@ def main():
     X_j, y_j = B.load_external(B.JAPAN_PATH, med)
 
     zoo, sc, lr, qt = B.fit_model_zoo(X_tr, y_tr)
+    tuned = {
+        'XGBoost': XGBClassifier(n_estimators=100, max_depth=3,
+                                 learning_rate=0.03, random_state=SEED,
+                                 eval_metric='logloss'),
+        'CatBoost': CatBoostClassifier(iterations=500, depth=4,
+                                       learning_rate=0.03, random_seed=SEED,
+                                       verbose=0),
+        'Random Forest': RandomForestClassifier(n_estimators=500, max_depth=6,
+                                                min_samples_leaf=2,
+                                                random_state=SEED),
+    }
+    for mdl in tuned.values():
+        mdl.fit(X_tr, y_tr)
+
+    def predict(name, X):
+        if name in tuned:
+            return tuned[name].predict_proba(X)[:, 1]
+        return zoo[name](X)
+
     models = ['Scorecard', 'Raw LR', 'ROMA', 'CPH-I', 'CA125 rule',
               'XGBoost', 'CatBoost', 'Random Forest']
     cohorts = [('West China', X_w, y_w), ('Japan', X_j, y_j)]
@@ -67,7 +91,7 @@ def main():
     auroc_se = {}
     for cname, Xc, yc in cohorts:
         for m in models:
-            boot = bootstrap_auroc(yc, zoo[m](Xc), n_boot=2000)
+            boot = bootstrap_auroc(yc, predict(m, Xc), n_boot=2000)
             auroc_se[(cname, m)] = (float(np.mean(boot)), float(np.std(boot, ddof=1)))
 
     rows = []
@@ -91,7 +115,8 @@ def main():
             continue
         eff, ses = [], []
         for cname, Xc, yc in cohorts:
-            diffs = bootstrap_pairwise(yc, zoo['Scorecard'](Xc), zoo[m](Xc), n_boot=2000)
+            diffs = bootstrap_pairwise(yc, zoo['Scorecard'](Xc), predict(m, Xc),
+                                       n_boot=2000)
             eff.append(float(np.mean(diffs)))
             ses.append(float(np.std(diffs, ddof=1)))
         pooled, se, tau2, i2 = der_simonian_laird(eff, ses)
@@ -128,8 +153,8 @@ def main():
     ax.set_yticks(ypos)
     ax.set_yticklabels(d['Comparator'])
     ax.set_xlabel('AUROC difference (scorecard minus comparator)')
-    ax.set_title('Meta-analysis of external validation cohorts (random effects)',
-                 fontweight='bold')
+    ax.set_title('Meta-analysis of the two external cohorts (random effects;\n'
+                 'Setting B tuned ensembles)', fontweight='bold')
     ax.grid(alpha=0.3, linestyle='--', axis='x')
     from matplotlib.lines import Line2D
     ax.legend(handles=[

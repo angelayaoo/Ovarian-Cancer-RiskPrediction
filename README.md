@@ -1,4 +1,4 @@
-﻿# Model Complexity Versus Transportability in Ovarian Cancer Risk Prediction
+﻿# External Validation of a Seven-Weight Scorecard versus Tree Ensembles in Ovarian Cancer Risk Prediction
 
 **Jiayi Yao** (BASIS Independent Bellevue, Bellevue, WA, USA),
 **Zooey Lane Go Hua** (Issaquah High School, Issaquah, WA, USA),
@@ -12,13 +12,15 @@ Submission to the IEEE BIBM 2026 Undergraduate & High School Symposium
 Eight models (a CA125 cutoff rule, the clinical formulas ROMA and CPH-I, a
 logistic regression, a hand-computable integer scorecard, and three tree
 ensembles) are trained once on a Chinese cohort (Changzhou, n = 349) and
-applied unchanged to two independent Asian cohorts (West China, n = 380;
-Japan, n = 177). Complete-case (measured-HE4) and imputed co-primary
-external benchmarks, a random-effects meta-analysis, weighted-harm
-decision analysis, calibration reporting, robustness experiments, and an
-illustrative concept-drift simulation show that a seven-parameter integer
-scorecard matches more complex models' discrimination while remaining
-transparent, auditable, and computable by hand.
+applied unchanged to a second Chinese cohort (West China, n = 380) and to
+a Japanese cohort (n = 177) used as a specificity stress test.
+Complete-case (measured-HE4, n = 100) and imputed co-primary external
+benchmarks, a random-effects meta-analysis, weighted-harm decision
+analysis, calibration reporting, robustness experiments, and an
+illustrative concept-drift simulation show that a seven-weight integer
+scorecard performs no worse than the complex models' discrimination on
+these small cohorts while remaining transparent, auditable, and
+computable by hand.
 
 ## Environment setup
 
@@ -44,6 +46,7 @@ bash reproduce.sh
 
 runs the full pipeline end-to-end (~45 min; the simulation study is the
 slow part) and writes every CSV behind Tables I--III and Figures 1--3.
+Step 1 regenerates `data/processed/` byte-for-byte from `data/raw/`.
 To rebuild the paper PDF:
 
 ```bash
@@ -51,7 +54,7 @@ cd bmib_hs
 tectonic -X compile main.tex
 ```
 
-Expected output: exactly 5 pages, 0 errors, 0 overfull warnings.
+Expected output: 5 pages, no errors, no overfull warnings.
 
 ## Directory tree
 
@@ -68,6 +71,9 @@ Expected output: exactly 5 pages, 0 errors, 0 overfull warnings.
 ├── reproduce.sh              # one-shot pipeline
 ├── requirements.txt          # pinned dependencies
 ├── LICENSE                   # MIT
+├── CITATION.cff              # citation metadata
+├── CONTRIBUTING.md           # contribution guide
+├── Dockerfile                # containerized reproduction
 └── README.md
 ```
 
@@ -94,6 +100,8 @@ files.
 | Table I (integer scorecard) | fitted by `src/bench_lib.py` |
 | Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
 | Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
+| Pooled meta-analysis (Setting B) | `src/meta_analysis.py` → `results/meta_analysis.csv` |
+| Q1 operating points | `src/decision_harm_analysis.py` → `results/decision_consequences.csv`, `results/scorecard_operating_points.csv` |
 | Figures 1--3 | `src/make_bmib_artifacts.py` (+ `src/simulation_study.py` for Fig. 3 data) |
 | Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` |
 | MICE sensitivity | `src/make_bmib_artifacts.py` → `results/bmib_mice.csv` |
@@ -110,8 +118,8 @@ this work:
 
 ```bibtex
 @software{ovarian_complexity_transportability,
-  title = {Model Complexity Versus Transportability in Ovarian Cancer Risk
-           Prediction},
+  title = {External Validation of a Seven-Weight Scorecard versus Tree
+           Ensembles in Ovarian Cancer Risk Prediction},
   year = {2026}
 }
 ```

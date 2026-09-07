@@ -262,11 +262,15 @@ def main():
             out.append((tp - fp * t / (1 - t)) / n)
         return np.array(out)
 
+    p_roma = zoo['ROMA'](X_w) / 100.0
+    p_cphi = zoo['CPH-I'](X_w)
+    recal_roma = LogisticRegression().fit(p_roma.reshape(-1, 1), y_w)
+    recal_cphi = LogisticRegression().fit(p_cphi.reshape(-1, 1), y_w)
     dca_probs = {
         'Scorecard': recal_s.predict_proba(s_w.reshape(-1, 1))[:, 1],
         'Logistic reg.': zoo['Raw LR'](X_w),
-        'ROMA (recal.)': zoo['ROMA'](X_w) / 100.0,
-        'CPH-I (recal.)': zoo['CPH-I'](X_w),
+        'ROMA (recal.)': recal_roma.predict_proba(p_roma.reshape(-1, 1))[:, 1],
+        'CPH-I (recal.)': recal_cphi.predict_proba(p_cphi.reshape(-1, 1))[:, 1],
     }
     colors = {'Scorecard': '#2ca02c', 'Logistic reg.': '#8c564b',
               'ROMA (recal.)': '#d62728', 'CPH-I (recal.)': '#17becf'}
@@ -275,7 +279,7 @@ def main():
     ts = np.linspace(0.01, 0.99, 200)
     prev = float(np.mean(y_w))
     fig, ax = plt.subplots(figsize=(3.5, 2.9))
-    ax.axvspan(5, 30, color='#f2f2f2', zorder=0)
+    ax.axvspan(7, 30, color='#f2f2f2', zorder=0)
     for mname, p in dca_probs.items():
         nb = nb_curve(y_w, p, ts)
         ax.plot(ts * 100, nb, ls=styles[mname], lw=2.0, color=colors[mname],

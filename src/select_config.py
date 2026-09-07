@@ -29,9 +29,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from bench_lib import (
-    parse_cohort_data, KNNImputer, Scorecard as PreTrainedRiskSLIM
-)
+from bench_lib import parse_cohort_data, KNNImputer, Scorecard
 
 DATA_DIR = 'data/processed'
 RESULTS_DIR = 'results'

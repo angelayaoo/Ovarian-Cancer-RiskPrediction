@@ -4,33 +4,37 @@
 # Run from the repository root. Runtime ~45 min (simulation is the slow part).
 set -euo pipefail
 
-echo "[1/9] clinical comparators (Table II West/Japan columns, pairwise tests)"
+echo "[1/10] harmonize raw cohort files into data/processed (byte-for-byte)"
+python src/clean_data.py
+
+echo "[2/10] clinical comparators (Table II West/Japan columns, pairwise tests)"
 python src/clinical_comparators.py
 
-echo "[2/9] repeated CV + selection stability + nested CV (Section III-E)"
+echo "[3/10] repeated CV + selection stability + nested CV (Section III-E)"
 python src/repeated_cv.py
 
-echo "[3/9] meta-analytic pooling (pooled +0.043 comparison)"
+echo "[4/10] meta-analytic pooling (pooled +0.043 comparison)"
 python src/meta_analysis.py
 
-echo "[4/9] calibration, Brier, calibration-in-the-large"
+echo "[5/10] calibration, Brier, calibration-in-the-large"
 python src/calibration_metrics.py
 
-echo "[5/9] weighted-harm decision analysis (Table III base)"
+echo "[6/10] weighted-harm decision analysis (Table III base + Q1 operating points)"
 python src/decision_harm_analysis.py
 
-echo "[6/9] robustness experiments + learning curves"
+echo "[7/10] robustness experiments + learning curves"
 python src/robustness_extended.py
 
-echo "[7/9] simulation study (Fig. 3 + factor decomposition, ~25 min)"
+echo "[8/10] simulation study (Fig. 3 + factor decomposition, ~25 min)"
 python src/simulation_study.py
 
-echo "[8/9] tree tuning grid (Setting B configurations)"
+echo "[9/10] tree tuning grid + scorecard selection sweep"
 python src/tree_tuning_grid.py
+python src/select_config.py
 
-echo "[9/9] BIBM-specific artifacts: complete-case CIs, Setting B ensembles,"
-echo "      MICE sensitivity, recalibrated harms, calibration slopes,"
-echo "      and Figures 1-3 in bmib_hs/figures/"
+echo "[10/10] BIBM-specific artifacts: complete-case CIs, Setting B ensembles,"
+echo "       MICE sensitivity, recalibrated harms, calibration slopes,"
+echo "       and Figures 1-3 in bmib_hs/figures/"
 python src/make_bmib_artifacts.py
 
 echo "Done. Compile the paper with: cd bmib_hs && tectonic main.tex"

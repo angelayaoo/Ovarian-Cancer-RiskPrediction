@@ -11,13 +11,15 @@
 ## Development setup
 
 ```bash
-pip install pandas numpy scikit-learn xgboost matplotlib
-python src/run_monte_carlo_benchmarks.py
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+bash reproduce.sh
 ```
 
 ## Code style
 
-- Python 3.10+
+- Python 3.13
 - Follow PEP 8
 - Use type hints where possible
 - Add docstrings for public functions
