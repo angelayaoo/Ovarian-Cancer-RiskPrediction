@@ -2,6 +2,7 @@
 \IEEEoverridecommandlockouts
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
+\usepackage{newtxtext,newtxmath}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{url}
@@ -28,30 +29,24 @@ vritikas01@gmail.com}}
 
 \begin{abstract}
 Preoperative blood tests help decide whether an ovarian mass requires
-cancer surgery; a model that degrades silently at a new hospital can
-delay surgery or trigger unnecessary operations. This paper asks whether
-more complex machine learning models transfer better to new hospitals
-than simple ones. Eight models (a CA125 cutoff rule, the clinical
-formulas ROMA and CPH-I, a logistic regression, an integer scorecard,
-and three tree ensembles) were trained on a Chinese dataset
-(349 patients) and applied unchanged elsewhere. External evidence is
-deliberately narrow: the primary benchmark is 100 West China patients
-with measured biomarkers (63 cancers), alongside the same cohort with
-74 percent imputed HE4 (380 patients); a Japanese cohort
-(177 patients, 150 healthy women) serves only as a specificity stress
-test, not as an external validation cohort. On the 100 complete cases,
-the scorecard (area under the ROC curve, 0.971) was numerically highest
-and did not differ significantly from the logistic regression (0.941) or
-ROMA (0.965). A computer simulation, calibrated to the real data and
-intended only as an illustrative counterexample, found that the flexible
-models won when the biomarker-cancer relationship stayed constant, but
-under the simulated form of concept drift examined here
-their advantage diminished and reversed (the scorecard was most accurate
-in 22 of 24 conditions). Within these small Asian cohorts, a
-hand-computable integer scorecard performed no worse than far more
-complex tree ensembles and missed fewer cancers than the off-the-shelf
-formulas; generalization beyond these cohorts
-requires larger validation studies.
+cancer surgery, and a model that degrades silently at a new hospital
+can delay surgery or trigger unnecessary operations. We trained eight
+models (a CA125 cutoff rule, the published formulas ROMA and CPH-I, a
+logistic regression, a hand-computable integer scorecard, and three
+tree ensembles) on a Chinese dataset (349 patients) and applied them
+unchanged elsewhere. The primary external benchmark is 100 West China
+patients with measured biomarkers (63 cancers); the 74-percent-imputed
+cohort (380 patients) is co-primary, and a Japanese cohort (150 healthy
+women, 27 cancers) serves only as a specificity stress test. On the 100
+complete cases, the scorecard (area under the ROC curve 0.971) was
+numerically highest and did not differ significantly from the logistic
+regression (0.941) or ROMA (0.965). A simulation calibrated to the
+real data, intended only as an illustrative counterexample, showed
+that under the simulated concept drift examined here the flexible
+models' advantage diminished and reversed. Within these small Asian
+cohorts, the scorecard performed no worse than far more complex
+ensembles and missed fewer cancers than the off-the-shelf formulas;
+generalization beyond these cohorts requires larger validation studies.
 \end{abstract}
 
 \begin{IEEEkeywords}
