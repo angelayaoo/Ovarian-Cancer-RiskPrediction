@@ -1,4 +1,5 @@
 \documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
@@ -6,7 +7,7 @@
 \usepackage{url}
 \begin{document}
 
-\title{External Validation of a Seven-Weight Scorecard versus Tree Ensembles in Ovarian Cancer Risk Prediction}
+\title{External Validation of a Seven-Weight Scorecard versus Tree Ensembles in Ovarian Cancer Risk Prediction\thanks{The authors acknowledge the use of Google Gemini, an AI-based assistant, for grammar checks and basic code debugging; the authors retain full authority and responsibility for the design, methodology, analysis, and all claims.}}
 
 \author{\IEEEauthorblockN{Jiayi Yao}
 \IEEEauthorblockA{\textit{BASIS Independent Bellevue}\\
@@ -493,22 +494,16 @@ biomarkers, keeping the score hand-computable with only the new
 weights refit; on these small cohorts the scorecard already performed
 no worse than far more complex models.
 
-\section*{Acknowledgment}
-The authors acknowledge the use of Google Gemini, an AI-based
-assistant, for grammar checks and basic code debugging; the authors
-retain full authority and responsibility for the design, methodology,
-analysis, and all claims.
-
 \begin{thebibliography}{00}
-\bibitem{moore2011} R. G. Moore, M. C. Miller, P. Disilvestro, et al.,
+\bibitem{moore2011} R. G. Moore et al.,
 ``Evaluation of the diagnostic accuracy of the risk of ovarian malignancy
 algorithm in women with a pelvic mass,'' \emph{Obstet. Gynecol.}, vol. 118,
 pp. 280--288, 2011.
-\bibitem{karlsen2015} M. A. Karlsen, E. V. S. H{\o}gdall, I. J. Christensen,
-et al., ``A novel diagnostic index combining HE4, CA125 and age may improve
+\bibitem{karlsen2015} M. A. Karlsen et al., ``A novel diagnostic index
+combining HE4, CA125 and age may improve
 triage of women with suspected ovarian cancer,'' \emph{Gynecol. Oncol.},
 vol. 138, pp. 640--646, 2015.
-\bibitem{kawakami2019} E. Kawakami, J. Tabata, N. Yanaihara, et al.,
+\bibitem{kawakami2019} E. Kawakami et al.,
 ``Application of artificial intelligence for preoperative diagnostic and
 prognostic prediction in epithelial ovarian cancer based on blood
 biomarkers,'' \emph{Clin. Cancer Res.}, vol. 25, pp. 3006--3015,
@@ -518,17 +513,17 @@ E. W. Steyerberg, J. Y. Verbakel, and B. Van Calster, ``A systematic review
 shows no performance benefit of machine learning over logistic regression
 for clinical prediction models,'' \emph{J. Clin. Epidemiol.}, vol. 110,
 pp. 12--22, 2019.
-\bibitem{dataset1} Q. Mi, J. Jiang, T. Znati, et al., ``Data for: using
+\bibitem{dataset1} Q. Mi et al., ``Data for: using
 machine learning to predict ovarian cancer,'' Mendeley Data, vol. 11,
 2020, doi:10.17632/th7fztbrv9.11.
 \bibitem{dataset2} Li, ``Comparative analysis of clinical characteristics
 between ovarian cancer and ovarian cyst patients,'' figshare, 2025,
 doi:10.6084/m9.figshare.28831256.
-\bibitem{machida2023} H. Machida, T. Hirakawa, K. Tsunekawa, et al.,
-``Revised cut-off value of human epididymis protein 4 enhances its use
-as an ovarian tumor marker,'' \emph{Gynecol. Obstet. Invest.},
-vol. 88, pp. 349--358, 2023.
-\bibitem{lu2020} M. Lu, Z. Fan, B. Xu, et al., ``Using machine learning
+\bibitem{machida2023} H. Machida, T. Hirakawa, K. Tsunekawa, T. Kimura,
+M. Murakami, and Y. Abe, ``Revised cut-off value of human epididymis
+protein 4 enhances its use as an ovarian tumor marker,''
+\emph{Gynecol. Obstet. Invest.}, vol. 88, pp. 349--358, 2023.
+\bibitem{lu2020} M. Lu et al., ``Using machine learning
 to predict ovarian cancer,'' \emph{Int. J. Med. Inform.}, vol. 141,
 p. 104195, 2020.
 \bibitem{dersimonian1986} R. DerSimonian and N. Laird, ``Meta-analysis in
