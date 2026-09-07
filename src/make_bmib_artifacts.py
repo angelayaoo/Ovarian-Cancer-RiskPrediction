@@ -201,27 +201,32 @@ def main():
         os.path.join(RESULTS_DIR, 'bmib_calibration_slope.csv'), index=False)
 
     # ---------- West China paired scorecard-minus-comparator differences --
-    rng = np.random.RandomState(SEED)
-    n_w = len(y_w)
-    s_sc = zoo['Scorecard'](X_w)
-    diff_rows = []
-    for key in ['Raw LR', 'ROMA', 'CPH-I', 'XGBoost', 'CatBoost',
-                'Random Forest']:
-        p_c = tuned[key].predict_proba(X_w)[:, 1] if key in tuned \
-            else zoo[key](X_w)
-        diffs = []
-        for _ in range(2000):
-            idx = rng.randint(0, n_w, n_w)
-            diffs.append(float(B.auroc(y_w[idx], s_sc[idx])
-                              - B.auroc(y_w[idx], p_c[idx])))
-        diffs = np.array(diffs)
-        lo, hi = np.percentile(diffs, [2.5, 97.5])
-        p = 2 * min(float((diffs <= 0).mean()), float((diffs >= 0).mean()))
-        diff_rows.append((key, round(float(diffs.mean()), 4), round(lo, 4),
-                          round(hi, 4), round(p, 4)))
-    pd.DataFrame(diff_rows, columns=['Comparator', 'dAUROC', 'CI low',
-                                     'CI high', 'p']).to_csv(
-        os.path.join(RESULTS_DIR, 'bmib_west_paired.csv'), index=False)
+    def paired_diffs(X, y, out_path):
+        rng = np.random.RandomState(SEED)
+        n = len(y)
+        s_sc = zoo['Scorecard'](X)
+        diff_rows = []
+        for key in ['Raw LR', 'ROMA', 'CPH-I', 'XGBoost', 'CatBoost',
+                    'Random Forest']:
+            p_c = tuned[key].predict_proba(X)[:, 1] if key in tuned \
+                else zoo[key](X)
+            diffs = []
+            for _ in range(2000):
+                idx = rng.randint(0, n, n)
+                diffs.append(float(B.auroc(y[idx], s_sc[idx])
+                                  - B.auroc(y[idx], p_c[idx])))
+            diffs = np.array(diffs)
+            lo, hi = np.percentile(diffs, [2.5, 97.5])
+            p = 2 * min(float((diffs <= 0).mean()),
+                        float((diffs >= 0).mean()))
+            diff_rows.append((key, round(float(diffs.mean()), 4),
+                              round(lo, 4), round(hi, 4), round(p, 4)))
+        pd.DataFrame(diff_rows, columns=['Comparator', 'dAUROC', 'CI low',
+                                         'CI high', 'p']).to_csv(
+            os.path.join(RESULTS_DIR, out_path), index=False)
+
+    paired_diffs(X_cc, y_cc, 'bmib_cc_paired.csv')
+    paired_diffs(X_w, y_w, 'bmib_west_paired.csv')
 
     # ---------- Figure 1: complete-case forest plot ----------
     rows = [('CA125 rule', 'CA125 rule'), ('CPH-I', 'CPH-I'), ('ROMA', 'ROMA'),

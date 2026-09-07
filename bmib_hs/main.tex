@@ -118,15 +118,15 @@ specificity stress test, not external validation:
 its AUROC is reported separately and never pooled with
 West China's. The primary
 West China analyses use the 100 patients with measured HE4 (63 cancers,
-37 benign), so that the external result rests on measured biology rather
+37 benign), so the external result rests on measured biology rather
 than imputed constants; the 280 excluded patients (125 cancers, 155
 benign) had similar age, CA125, and menopausal rates.
 
 \subsection{Sensitivity to Missing Biomarkers}
 
 The primary external benchmark uses the 100 West China patients with
-measured HE4. The 74\%-imputed full cohort ($N=380$) is reported as a
-sensitivity analysis, because median imputation may
+measured HE4. The 74\%-imputed cohort ($N=380$) is a sensitivity
+analysis, because median imputation may
 alter model discrimination; no-HE4 refits and MICE AUROCs bound this
 effect (Section~\ref{sec:calibration}).
 
@@ -201,8 +201,9 @@ Menopausal status & $0$ & $0$ & $0$\\
 Discrimination was measured by the area under the ROC curve (AUROC), with
 95\% confidence intervals and two-sided paired bootstrap tests between
 models from 2{,}000 patient-level resamples. The prespecified primary
-comparison is the scorecard versus ROMA on West China; all other
-comparisons are secondary, and effect sizes with
+comparison is the scorecard versus ROMA on the 100 complete cases; the
+same comparisons on the 74\%-imputed cohort are sensitivity analyses.
+All other comparisons are secondary, and effect sizes with
 95\% CIs are emphasized over p-values, with Holm--Bonferroni adjustment
 across the six comparisons of Section~\ref{sec:results}.
 Calibration was measured with the Brier
@@ -285,22 +286,28 @@ On the 74\%-imputed full cohort ($N=380$; sensitivity analysis), the ranking
 was similar (logistic regression 0.936, scorecard 0.929, tuned
 ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
 
-On the imputed West China cohort, the scorecard-minus-ROMA difference
-was $+0.043$ AUROC (95\% CI 0.012 to 0.073; $p=0.008$); the scorecard
-also exceeded CPH-I ($+0.061$; 0.032 to 0.092), XGBoost ($+0.040$;
-0.012 to 0.068), CatBoost ($+0.052$; 0.021 to 0.086), and Random
-Forest ($+0.034$; 0.006 to 0.065), and did not differ from the
-logistic regression ($-0.007$; $-0.025$ to 0.011; $p=0.48$). After
-Holm--Bonferroni correction across the six comparisons, the scorecard
-remained significantly ahead of CPH-I, XGBoost, and CatBoost (adjusted
-$p<0.01$), ROMA (0.02), and Random Forest (0.03).
+On the 100 complete cases, the primary comparison gave a
+scorecard-minus-ROMA difference of $+0.006$ AUROC (95\% CI $-0.019$ to
+0.032; $p=0.65$); the scorecard also did not differ from the logistic
+regression ($+0.030$; $-0.002$ to 0.073; $p=0.09$) or XGBoost
+($+0.024$; $-0.002$ to 0.058; $p=0.08$), and exceeded CPH-I ($+0.040$;
+0.004 to 0.084; $p=0.03$), CatBoost ($+0.058$; 0.017 to 0.115;
+$p=0.004$), and Random Forest ($+0.040$; 0.007 to 0.086; $p=0.006$).
+After Holm--Bonferroni correction, only CatBoost
+(adjusted $p=0.02$) and Random Forest (0.03) remained significant.
+On the imputed cohort (sensitivity analysis), all six differences were
+more favorable to the scorecard: versus ROMA $+0.043$ (0.012 to 0.073;
+$p=0.008$), CPH-I $+0.061$ (0.032 to 0.092), XGBoost $+0.040$ (0.012
+to 0.068), CatBoost $+0.052$ (0.021 to 0.086), and Random Forest
+$+0.034$ (0.006 to 0.065); the logistic regression remained
+indistinguishable ($-0.007$; $-0.025$ to 0.011; $p=0.48$).
 
 In the Japan specificity stress test ($n=177$), CPH-I was highest
 (0.920; Table~\ref{tab:auroc}, Japan column).
 Within Japan, 86\% of healthy women but only 30\% of cancer patients
-fell into both markers' lowest bins; West China had higher CA125 (65.1
-vs.\ 49.3 U/mL), the volunteers far lower markers (CA125
-15.1, HE4 33.8).
+fell into both markers' lowest bins; the volunteers also had far
+lower markers (CA125 15.1, HE4 33.8 vs.\ 65.1 and 49.3 U/mL in West
+China).
 
 \begin{table}[!t]
 \caption{AUROC (95\% CI) by model and cohort, bootstrap means over
@@ -403,8 +410,7 @@ scorecard's logistic mapping was refit on West
 China; the logistic regression is shown frozen from training, and the
 formulas at published scales. Because the scorecard's fitting and
 evaluation share the cohort, these are apparent-calibration
-figures, not prospective ones, and only its figures can be inflated by
-the shared data.
+figures, not prospective ones, and only its figures can be inflated.
 The recalibrated scorecard had Brier 0.097, calibration slope
 1.00, and expected calibration error (ECE) 0.042; the logistic regression
 had Brier 0.111, slope 1.44, and ECE
@@ -464,7 +470,7 @@ decisions: the published cutpoints missed 82 of 188 cancers versus 47
 for the scorecard's fixed high-risk tier, and with all models
 recalibrated its minimum harm stayed lowest up to 5:1. Third, on
 transportability: the simulation offers one possible explanation---
-flexible models can exploit interaction and
+flexible models exploit interaction and
 nonlinear patterns that do not persist; when those
 patterns were removed, the scorecard had the highest AUROC in 22 of 24
 cells.

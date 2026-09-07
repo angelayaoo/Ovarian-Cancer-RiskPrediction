@@ -100,7 +100,7 @@ files.
 | Table I (integer scorecard) | fitted by `src/bench_lib.py` |
 | Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
 | Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
-| West China paired differences | `src/make_bmib_artifacts.py` → `results/bmib_west_paired.csv` |
+| West China paired differences (complete cases and imputed) | `src/make_bmib_artifacts.py` → `results/bmib_cc_paired.csv`, `results/bmib_west_paired.csv` |
 | Q1 operating points | `src/decision_harm_analysis.py` → `results/decision_consequences.csv`, `results/scorecard_operating_points.csv` |
 | Figures 1--3 | `src/make_bmib_artifacts.py` (+ `src/simulation_study.py` for Fig. 3 data) |
 | Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` |
