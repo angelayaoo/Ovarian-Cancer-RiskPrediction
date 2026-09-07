@@ -83,7 +83,9 @@ patient populations differ.
 \subsection{Data}
 
 Three public, anonymized datasets were used
-\cite{dataset1,dataset2,machida2023}: a training cohort from Changzhou,
+\cite{dataset1,dataset2,machida2023}. They are the only public,
+de-identified cohorts recording preoperative CA125 and HE4 with
+confirmed diagnoses; the cohorts are a training cohort from Changzhou,
 Jiangsu, China (349 patients; 171 ovarian cancers, 178 benign masses;
 Mendeley Data, doi:10.17632/th7fztbrv9.11, released with the study
 ``Using machine learning to predict ovarian cancer''), a second Chinese
@@ -97,7 +99,8 @@ doi:10.6084/m9.figshare.24235450, supplement to
 are surgical series of women with pelvic masses; the Japanese cohort
 contains healthy volunteers. Each patient has four features: CA125
 (U/mL), HE4 (pmol/L), age, and menopausal status. In West China, HE4 was
-missing for 74\% of patients; in Japan, age for 85\%. Missing external
+not measured for 74\% of patients; in Japan, age was not recorded for
+85\%. Missing external
 values were replaced with the training-set median, computed once and
 frozen, so that no statistic is ever computed on a validation cohort.
 The Japanese cohort is a healthy-volunteer population (cancer
@@ -162,9 +165,9 @@ else.
 
 \begin{table}[!t]
 \caption{The integer scorecard, fitted on the Chinese training cohort
-(349 patients) and applied unchanged externally. Features are binned by
-frozen training-set tertiles; the binary menopausal feature received a
-coefficient that rounded to zero, so it contributes no points.}
+(349 patients), applied unchanged externally; features binned by frozen
+training-set tertiles; the binary menopausal feature received a
+coefficient that rounded to zero.}
 \label{tab:score}
 \centering
 \begin{tabular}{lccc}
@@ -196,11 +199,10 @@ score and calibration-in-the-large. Decision value was quantified with a weighte
 and for exchange rates $w\in\{1,5,10,50\}$ (the harm of one missed cancer
 relative to one unnecessary referral) the threshold minimizing
 $H=w\times\text{missed}+\text{unnecessary}$ per 100 women was identified.
-The paper answers two distinct questions: Q1, whether each model
-transports unchanged (all discrimination analyses and the
-published-cutpoint comparison in Section~\ref{sec:results}), and Q2, how
-well each model performs after local recalibration (calibration, DCA,
-and primary harm analyses). The exchange-rate weights
+We distinguish two questions. Q1: does each model transport
+unchanged (the discrimination results and the published-cutpoint
+comparison)? Q2: how well can each model perform after local
+recalibration (the calibration, decision-curve, and harm analyses)? The exchange-rate weights
 are hypothetical scenarios, not validated clinical utilities: they span from valuing a missed cancer and an
 unnecessary referral equally ($w=1$) to valuing a missed cancer 50 times
 as much ($w=50$). These analyses are intended to characterize sensitivity
@@ -298,9 +300,8 @@ levels (CA125 15.1 U/mL, HE4 33.8 pmol/L).
 HE4 (primary external benchmark); West: the full 74\%-imputed cohort
 ($N=380$, co-primary analysis); Japan: healthy volunteers (specificity
 stress test). Setting A (defaults) ensembles scored 0.921/0.922/0.910
-(CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792 (Japan). Bold: highest
-value per cohort, or all values statistically indistinguishable from it
-(paired bootstrap).}
+(CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792 (Japan). Bold: highest per cohort, or statistically
+indistinguishable from it (paired bootstrap).}
 \label{tab:auroc}
 \centering
 \begin{tabular}{@{}lccc@{}}
@@ -353,9 +354,9 @@ and 48 (CPH-I) of 188 cancers.
 \caption{Decision curve analysis on West China (N~$=$~380): net benefit
 per patient (true positives minus threshold-weighted false positives)
 against the decision threshold in percent,
-with ``treat all'' (dashed) and ``treat
-none'' (the horizontal axis) as references; the shaded band marks the
-published-cutpoint triage range (7--30\%). The
+with treat-all (dashed) and treat-none (the horizontal axis)
+references; the shaded band marks the published-cutpoint range
+(7--30\%). The
 scorecard and the two formulas are shown after within-cohort
 recalibration. XGBoost is omitted; uncertainty bands are omitted;
 minimum harms are in Table~\ref{tab:harm}.}
@@ -406,9 +407,9 @@ primary analysis.
 
 \subsection{Robustness and simulation}
 
-For robustness to measurement noise (West China, $N=380$), losses
-under 30\% multiplicative noise were 0.040 for the scorecard, 0.002 for
-the logistic regression, 0.074 for ROMA, and 0.086 for XGBoost.
+Under 30\% multiplicative noise (West China, $N=380$), losses were
+0.040 for the scorecard, 0.002 for the logistic regression, 0.074 for
+ROMA, and 0.086 for XGBoost.
 
 In the simulation (Figure~\ref{fig:regime}), the
 ensemble-average minus-scorecard gap averaged $+0.018$ at drift level
@@ -451,9 +452,7 @@ the simulation
 shows one concrete theoretical mechanism by which complexity can hurt
 when the training structure does not persist.
 
-In short, a hand-computable integer scorecard can match far more
-complex models, miss fewer cancers than off-the-shelf formulas, and
-stay fully transparent.
+
 
 The main limitations are as follows. (i) All three cohorts are Asian
 hospital series, so results may not transfer to other populations. (ii) the 74\% missing-HE4 rate in West China and the small Japanese
@@ -463,11 +462,9 @@ data lack imaging); (iv) the simulation is a simplification, not a
 proof about any specific hospital.
 
 Future work should add ultrasound variables, validate prospectively,
-and test other tumor markers. As a proof of concept for transparent
-triage (retrospective, not prospective validation), the
-integer scorecard offers a potentially auditable, computationally free
-alternative that matches the best-performing models while remaining
-computable by hand.
+and test other tumor markers. In short, a hand-computable integer
+scorecard can match far more complex models, miss fewer cancers than
+off-the-shelf formulas, and stay fully transparent.
 
 \begin{thebibliography}{00}
 \bibitem{moore2011} R. G. Moore, M. C. Miller, P. Disilvestro, et al.,
