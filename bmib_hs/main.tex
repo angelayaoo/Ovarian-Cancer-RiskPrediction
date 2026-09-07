@@ -37,10 +37,12 @@ Forest (0.930) after multiple-comparison correction, and did not
 differ significantly from the logistic regression (0.941), ROMA
 (0.965), or XGBoost (0.946). A simulation calibrated to
 the real data, intended only as an illustrative counterexample, showed
-that under the simulated concept drift examined here the flexible
+that under the simulated concept drift the flexible
 models' advantage diminished and reversed. Within these small Asian
 cohorts, the scorecard performed no worse than far more complex
-ensembles and, at its fixed high-risk tier, missed fewer cancers than
+ensembles (on the imputed sensitivity cohort it significantly
+exceeded ROMA, CPH-I, and every tuned ensemble) and, at its
+fixed high-risk tier, missed fewer cancers than
 the published formulas at their cutpoints, at higher sensitivity and
 specificity; generalization beyond these
 cohorts requires larger validation studies.
@@ -128,9 +130,9 @@ benign) had similar age, CA125, and menopausal rates.
 \subsection{Sensitivity to Missing Biomarkers}
 
 The 74\%-imputed cohort ($N=380$) is a sensitivity
-analysis, because median imputation may
-alter model discrimination; no-HE4 refits and MICE AUROCs bound this
-effect (Section~\ref{sec:calibration}).
+analysis: median imputation may
+alter model discrimination, and no-HE4 refits and MICE AUROCs bound
+this effect (Section~\ref{sec:calibration}).
 
 \subsection{Models}\label{sec:models}
 
@@ -281,20 +283,20 @@ levels $d\in\{0,1\}$, with
 
 On the 100 West China patients with measured HE4 (63 cancers), the
 scorecard was numerically highest, with ROMA, tuned XGBoost, and the
-logistic regression within overlapping CIs; the rest were lower
+logistic regression within overlapping CIs
 (Table~\ref{tab:auroc}, West CC column; Fig.~\ref{fig:ladder}).
 
-On the 74\%-imputed full cohort ($N=380$; sensitivity analysis), the ranking
-was similar (logistic regression 0.936, scorecard 0.929, tuned
-ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
+On the 74\%-imputed cohort ($N=380$; sensitivity analysis), the ranking
+was similar (logistic regression 0.936, scorecard 0.929, ensembles
+0.877--0.895; Table~\ref{tab:auroc}).
 
 On the 100 complete cases, the primary comparison gave a
 scorecard-minus-ROMA difference of $+0.006$ AUROC (95\% CI $-0.019$ to
 0.032; $p=0.65$); the scorecard also did not differ from the logistic
-regression ($+0.030$; $-0.002$ to 0.073; $p=0.09$) or XGBoost
-($+0.024$; $-0.002$ to 0.058; $p=0.08$), and exceeded CPH-I ($+0.040$;
-0.004 to 0.084; $p=0.03$), CatBoost ($+0.058$; 0.017 to 0.115;
-$p=0.004$), and Random Forest ($+0.040$; 0.007 to 0.086; $p=0.006$).
+regression ($+0.030$; $p=0.09$) or XGBoost
+($+0.024$; $p=0.08$), and exceeded CPH-I ($+0.040$;
+$p=0.03$), CatBoost ($+0.058$; $p=0.004$),
+and Random Forest ($+0.040$; $p=0.006$).
 After Holm--Bonferroni correction, only CatBoost
 (adjusted $p=0.02$) and Random Forest (0.03) remained significant.
 On the imputed cohort (sensitivity analysis), the differences were
@@ -490,9 +492,8 @@ data lack imaging); (iv) the simulation is a simplification, not a
 proof about any specific hospital.
 
 Future work should add ultrasound variables and validate
-prospectively in larger, multi-center cohorts; on these small cohorts
-the scorecard already performed no worse than far more complex models
-and stayed fully transparent.
+prospectively in larger cohorts; on these small cohorts
+the scorecard already performed no worse than far more complex models.
 
 \section*{Acknowledgment}
 The authors acknowledge the use of Google Gemini, an AI-based
