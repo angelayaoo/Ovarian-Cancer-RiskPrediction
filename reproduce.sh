@@ -13,7 +13,7 @@ python src/clinical_comparators.py
 echo "[3/10] repeated CV + selection stability + nested CV (Section III-E)"
 python src/repeated_cv.py
 
-echo "[4/10] meta-analytic pooling (pooled +0.043 comparison)"
+echo "[4/10] cross-cohort comparison (supplementary; paper reports West China paired differences)"
 python src/meta_analysis.py
 
 echo "[5/10] calibration, Brier, calibration-in-the-large"

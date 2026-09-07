@@ -15,7 +15,7 @@ ensembles) are trained once on a Chinese cohort (Changzhou, n = 349) and
 applied unchanged to a second Chinese cohort (West China, n = 380) and to
 a Japanese cohort (n = 177) used as a specificity stress test.
 Complete-case (measured-HE4, n = 100) primary and imputed
-sensitivity external benchmarks, a random-effects meta-analysis,
+sensitivity external benchmarks, paired West China comparisons,
 weighted-harm decision analysis, calibration reporting, robustness
 experiments, and an illustrative concept-drift simulation show that a
 seven-weight integer scorecard performs no worse than the complex
@@ -100,7 +100,7 @@ files.
 | Table I (integer scorecard) | fitted by `src/bench_lib.py` |
 | Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
 | Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
-| Pooled meta-analysis (Setting B) | `src/meta_analysis.py` → `results/meta_analysis.csv` |
+| West China paired differences | `src/make_bmib_artifacts.py` → `results/bmib_west_paired.csv` |
 | Q1 operating points | `src/decision_harm_analysis.py` → `results/decision_consequences.csv`, `results/scorecard_operating_points.csv` |
 | Figures 1--3 | `src/make_bmib_artifacts.py` (+ `src/simulation_study.py` for Fig. 3 data) |
 | Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` |

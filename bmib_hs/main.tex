@@ -199,15 +199,13 @@ Menopausal status & $0$ & $0$ & $0$\\
 \subsection{Evaluation}
 
 Discrimination was measured by the area under the ROC curve (AUROC), with
-95\% confidence intervals from 2{,}000 patient-level bootstrap resamples,
-two-sided paired bootstrap tests between models, and a
-DerSimonian--Laird random-effects model~\cite{dersimonian1986} pooling
-the two external cohorts. The prespecified primary comparison is the scorecard versus ROMA
-(pooled); all other comparisons are secondary, and effect sizes with
-95\% CIs are emphasized over p-values. After
-Holm--Bonferroni correction across the five pooled pairwise comparisons
-in Section~\ref{sec:results}, the primary comparison remained
-significant (adjusted $p=0.012$). Calibration was measured with the Brier
+95\% confidence intervals and two-sided paired bootstrap tests between
+models from 2{,}000 patient-level resamples. The prespecified primary
+comparison is the scorecard versus ROMA on West China; all other
+comparisons are secondary, and effect sizes with
+95\% CIs are emphasized over p-values, with Holm--Bonferroni adjustment
+across the six comparisons of Section~\ref{sec:results}.
+Calibration was measured with the Brier
 score and calibration-in-the-large~\cite{vancalster2019}. Decision value was quantified with a weighted-harm analysis
 (Section~\ref{sec:results})~\cite{vickers2006}: thresholds were swept over 1--100\%,
 and for exchange rates $w\in\{1,5,10,50\}$ the threshold minimizing
@@ -226,8 +224,8 @@ only the scorecard's bin count and regularization were selected among
 12 candidates by repeated CV
 (Section~\ref{sec:internal}). The primary comparison applies
 the same within-cohort recalibration to every model; published-cutpoint
-operating points are reported separately; pooling was limited to
-discrimination, with no pooled decision analysis.
+operating points are reported separately; no pooled decision analysis
+was performed.
 The retraining experiment used stratified training subsets ($n=60$
 to 349, 10 draws each), evaluated unchanged on the imputed West China
 cohort. Robustness was tested with 10\% and 30\%
@@ -287,14 +285,15 @@ On the 74\%-imputed full cohort ($N=380$; sensitivity analysis), the ranking
 was similar (logistic regression 0.936, scorecard 0.929, tuned
 ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
 
-As a discrimination benchmark, a random-effects
-(DerSimonian--Laird) meta-analysis with paired bootstrap tests across
-the two external cohorts gave a pooled scorecard-minus-ROMA difference
-of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$); the scorecard also exceeded every tree ensemble (all $p\le0.002$) and
-did not differ from the logistic regression ($-0.005$; $p=0.55$). After
-Holm--Bonferroni correction, the scorecard--ROMA difference remained
-significant (adjusted $p=0.012$), as did the ensemble comparisons ($p$
-at most 0.010).
+On the imputed West China cohort, the scorecard-minus-ROMA difference
+was $+0.043$ AUROC (95\% CI 0.012 to 0.073; $p=0.008$); the scorecard
+also exceeded CPH-I ($+0.061$; 0.032 to 0.092), XGBoost ($+0.040$;
+0.012 to 0.068), CatBoost ($+0.052$; 0.021 to 0.086), and Random
+Forest ($+0.034$; 0.006 to 0.065), and did not differ from the
+logistic regression ($-0.007$; $-0.025$ to 0.011; $p=0.48$). After
+Holm--Bonferroni correction across the six comparisons, the scorecard
+remained significantly ahead of CPH-I, XGBoost, and CatBoost (adjusted
+$p<0.01$), ROMA (0.02), and Random Forest (0.03).
 
 In the Japan specificity stress test ($n=177$), CPH-I was highest
 (0.920; Table~\ref{tab:auroc}, Japan column).
@@ -545,9 +544,6 @@ categorical features,'' in \emph{Adv. Neural Inf. Process. Syst.},
 vol. 31, 2018.
 \bibitem{breiman2001} L. Breiman, ``Random forests,'' \emph{Mach. Learn.},
 vol. 45, no. 1, pp. 5--32, 2001.
-\bibitem{dersimonian1986} R. DerSimonian and N. Laird, ``Meta-analysis in
-clinical trials,'' \emph{Control. Clin. Trials}, vol. 7, no. 3, pp.
-177--188, 1986.
 \bibitem{vancalster2019} B. Van Calster, D. J. McLernon, M. van Smeden,
 L. Wynants, and E. W. Steyerberg, ``Calibration: the Achilles heel of
 predictive analytics,'' \emph{BMC Med.}, vol. 17, p. 230, 2019.
