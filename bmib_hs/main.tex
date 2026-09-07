@@ -315,7 +315,7 @@ not a standard external-validation metric.
 \newcommand{\auc}[2]{\shortstack{#1\\[1.5pt]{\scriptsize #2}}}
 \begin{tabular}{@{}lccc@{}}
 \toprule
-Model & West CC & West & Japan\\
+Model & West CC\textsuperscript{a} & West\textsuperscript{b} & Japan\textsuperscript{c}\\
 \midrule
 Scorecard & \auc{\textbf{0.971}}{0.936--0.995} & \auc{\textbf{0.929}}{0.902--0.955} & \auc{0.845}{0.714--0.949} \\
 Logistic reg. & \auc{0.941}{0.887--0.983} & \auc{\textbf{0.936}}{0.908--0.961} & \auc{0.806}{0.666--0.926} \\
@@ -332,12 +332,13 @@ Random Forest & \auc{0.930}{0.871--0.979} & \auc{0.895}{0.858--0.931} & \auc{0.8
 \end{tabular}
 
 \vspace{2pt}
-{\footnotesize CC: complete case; CI: confidence interval. West CC
-($n{=}100$): measured-HE4 complete cases (primary); West ($N{=}380$):
-74\%-imputed (co-primary); Japan ($n{=}177$): 150 healthy women and
-27 cancers (specificity stress test). Tree ensembles are Setting B
-(CV-tuned); Setting A (defaults) scored 0.921/0.922/0.910 (CC),
-0.887/0.879/0.879 (West), 0.736/0.750/0.794 (Japan).}
+{\footnotesize \textsuperscript{a}$n{=}100$, measured-HE4 complete
+cases (primary); \textsuperscript{b}$N{=}380$, 74\%-imputed
+(co-primary); \textsuperscript{c}$n{=}177$, 150 healthy women and
+27 cancers (specificity stress test). CC: complete case; CI: confidence
+interval. Tree ensembles are Setting B (CV-tuned); Setting A (defaults)
+scored 0.921/0.922/0.910 (CC), 0.887/0.879/0.879 (West),
+0.736/0.750/0.794 (Japan).}
 \end{table}
 
 \begin{figure}[!t]
@@ -517,10 +518,7 @@ E. W. Steyerberg, J. Y. Verbakel, and B. Van Calster, ``A systematic review
 shows no performance benefit of machine learning over logistic regression
 for clinical prediction models,'' \emph{J. Clin. Epidemiol.}, vol. 110,
 pp. 12--22, 2019.
-\bibitem{dersimonian1986} R. DerSimonian and N. Laird, ``Meta-analysis in
-clinical trials,'' \emph{Control. Clin. Trials}, vol. 7, no. 3, pp.
-177--188, 1986.
-\bibitem{dataset1} Q. Mi, J. Jiang, T. Znati, et al., ``Data for: Using
+\bibitem{dataset1} Q. Mi, J. Jiang, T. Znati, et al., ``Data for: using
 machine learning to predict ovarian cancer,'' Mendeley Data, vol. 11,
 2020, doi:10.17632/th7fztbrv9.11.
 \bibitem{dataset2} Li, ``Comparative analysis of clinical characteristics
@@ -533,6 +531,9 @@ vol. 88, pp. 349--358, 2023.
 \bibitem{lu2020} M. Lu, Z. Fan, B. Xu, et al., ``Using machine learning
 to predict ovarian cancer,'' \emph{Int. J. Med. Inform.}, vol. 141,
 p. 104195, 2020.
+\bibitem{dersimonian1986} R. DerSimonian and N. Laird, ``Meta-analysis in
+clinical trials,'' \emph{Control. Clin. Trials}, vol. 7, no. 3, pp.
+177--188, 1986.
 \end{thebibliography}
 
 \end{document}
