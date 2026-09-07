@@ -205,7 +205,7 @@ def main():
             ('Scorecard', 'Scorecard'), ('Logistic regression', 'Raw LR'),
             ('CatBoost', 'CatBoost'), ('XGBoost', 'XGBoost'),
             ('Random forest', 'Random Forest')]
-    fig, ax = plt.subplots(figsize=(3.5, 2.85))
+    fig, ax = plt.subplots(figsize=(3.5, 2.95))
     ys = np.arange(len(rows))
     for y, (disp, key) in zip(ys, rows):
         if key in tuned:
@@ -229,7 +229,7 @@ def main():
     ax.tick_params(axis='x', labelsize=8)
     ax.set_xlim(0.46, 1.08)
     ax.set_xlabel('Area under the ROC curve', fontsize=8,
-                  linespacing=1.3, labelpad=22)
+                  linespacing=1.3, labelpad=10)
     ax.grid(axis='x', alpha=0.25, ls='--', zorder=0)
     handles = [
         Line2D([], [], marker='o', ls='none', ms=5.5, mfc='#2ca02c',
@@ -242,10 +242,10 @@ def main():
                mec='black', mew=0.5, label='Simple rule'),
     ]
     ax.legend(handles=handles, loc='upper center',
-              bbox_to_anchor=(0.5, -0.10), ncol=2, fontsize=8,
+              bbox_to_anchor=(0.5, -0.16), ncol=2, fontsize=8,
               frameon=False, columnspacing=1.6, handletextpad=0.6,
               handlelength=1.2)
-    fig.subplots_adjust(left=0.38, right=0.97, top=0.97, bottom=0.30)
+    fig.subplots_adjust(left=0.38, right=0.97, top=0.97, bottom=0.36)
     fig.savefig(os.path.join(HS_DIR, 'fig1_auroc.png'),
                 bbox_inches='tight', pad_inches=0.06, dpi=300)
     plt.close(fig)
