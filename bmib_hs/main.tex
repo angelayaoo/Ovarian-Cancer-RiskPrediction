@@ -121,7 +121,7 @@ Because the Japanese cohort contains 150 healthy women and only 27
 cancers, and algorithm performance depends on the malignancy base rate
 among the patients tested~\cite{rolfsen2020}, it is treated as a
 specificity stress test, not external validation:
-its AUROC is reported separately and never pooled with
+its AUROC is never pooled with
 West China's. The primary
 West China analyses use the 100 patients with measured HE4 (63 cancers,
 37 benign), so the external result rests on measured biology rather
@@ -132,7 +132,7 @@ benign) had similar age, CA125, and menopausal rates.
 
 The 74\%-imputed cohort ($N=380$) is a sensitivity
 analysis: median imputation may
-alter model discrimination, and no-HE4 refits and MICE AUROCs bound
+alter discrimination, and no-HE4 refits and MICE AUROCs bound
 this effect (Section~\ref{sec:calibration}).
 
 \subsection{Models}\label{sec:models}
@@ -213,11 +213,14 @@ All other comparisons are secondary, and effect sizes with
 across the six comparisons of Section~\ref{sec:results}.
 Calibration was measured with the Brier
 score and calibration-in-the-large~\cite{vancalster2019}. Decision value was quantified with a weighted-harm analysis
-(Section~\ref{sec:results})~\cite{vickers2006}: thresholds were swept over 1--100\%,
-and for exchange rates $w\in\{1,5,10,50\}$ the threshold minimizing
-$H=w\times\text{missed}+\text{unnecessary}$ was identified.
+(Section~\ref{sec:results})~\cite{vickers2006}: decision thresholds were swept over 1--100\%,
+and for exchange rates $w\in\{1,5,10,50\}$ (thresholds
+$t=w/(1+w)$, 50--98\%) the threshold minimizing
+$H=w\times\text{missed}+\text{unnecessary}$ was identified;
+Fig.~\ref{fig:cons} shows the same analysis as net benefit against the
+threshold.
 We distinguish Q1 (does each model transport unchanged?) from Q2
-(how well can each model perform after local recalibration?). The exchange-rate weights
+(how well can it perform after local recalibration?). The exchange-rate weights
 are hypothetical scenarios, not validated clinical utilities: they span from valuing a missed cancer and an
 unnecessary referral equally ($w=1$) to valuing a missed cancer 50 times
 as much ($w=50$), characterizing sensitivity to relative error costs
@@ -270,11 +273,11 @@ generated the cancer label from the logistic model
 \end{equation}
 where $z_1$, $z_2$, and $z_3$ are the standardized log CA125, log HE4,
 and age, respectively, and $d\in[0,1]$ sets the drift level: $d=0$ keeps
-the interaction and nonlinear terms, $d=1$ removes them from the
-test-side model, and intermediate values scale them by $1-d$, as if the
+the interaction and nonlinear terms, $d=1$ removes them on the
+test side, and intermediate values scale them by $1-d$, as if the
 biomarker--cancer relationship partially changed between hospitals. The
-grid crossed training sizes $n\in\{100,200,400,800\}$, distribution
-shifts $s\in\{0,0.5,1.0\}$, measurement noise $\{0\%,50\%\}$, and drift
+grid crossed training sizes $n\in\{100,200,400,800\}$, shifts
+$s\in\{0,0.5,1.0\}$, noise $\{0\%,50\%\}$, and drift
 levels $d\in\{0,1\}$, with
 20 replicates per cell.
 
@@ -298,7 +301,7 @@ regression ($+0.030$; $p=0.09$) or XGBoost
 ($+0.024$; $p=0.08$), and exceeded CPH-I ($+0.040$;
 $p=0.03$), CatBoost ($+0.058$; $p=0.004$),
 and Random Forest ($+0.040$; $p=0.006$).
-After Holm--Bonferroni correction, only CatBoost
+After Holm--Bonferroni correction, CatBoost
 (adjusted $p=0.02$) and Random Forest (0.03) remained significant.
 On the imputed cohort (sensitivity analysis), the differences were
 all more favorable to the scorecard (vs.\ ROMA $+0.043$, CPH-I
@@ -353,7 +356,7 @@ trees, grey $=$ simple rule.}
 \label{sec:results}
 
 In the primary weighted-harm analysis (Q2; Table~\ref{tab:harm},
-Fig.~\ref{fig:cons}), every model was within-cohort recalibrated. The scorecard's minimum harm was below
+Fig.~\ref{fig:cons}), all models were recalibrated within cohort. The scorecard's minimum harm was below
 recalibrated ROMA and CPH-I at weights up to 5 (12.1
 vs.\ 14.7 and 15.0 at $w=1$); at $w=50$, both recalibrated formulas
 fell below it (ROMA 45.8, CPH-I 50.3, vs.\ 59.5). The
@@ -365,7 +368,8 @@ $w=50$), treating everyone dominates (Table~\ref{tab:harm}).
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{figures/fig2_cons}
-\caption{Decision curve analysis on West China (N~$=$~380): net benefit
+\caption{Decision curve analysis of the weighted-harm analysis on West
+China (N~$=$~380): net benefit
 per patient (true positives minus threshold-weighted false positives)
 against the decision threshold in percent,
 with treat-all (dashed) and treat-none (the horizontal axis)
@@ -410,21 +414,20 @@ published cutpoints.
 \subsection{Calibration and missing-data checks}
 \label{sec:calibration}
 
-For calibration on the imputed cohort, the
-scorecard's logistic mapping was refit on West
-China; the logistic regression is shown frozen from training, and the
-formulas at published scales. Because the scorecard's fitting and
-evaluation share the cohort, these are apparent-calibration
-figures, not prospective ones, and only its figures can be inflated.
+For calibration on the imputed cohort, the scorecard's logistic
+mapping was refit on West China; the logistic regression is shown
+frozen from training and the formulas at published scales, so only
+the scorecard's figures are apparent (fitted and evaluated on the same
+cohort) and can be inflated.
 The recalibrated scorecard had Brier 0.097, calibration slope
-1.00, and expected calibration error (ECE) 0.042; the logistic regression
+1.00, and ECE 0.042; the logistic regression
 had Brier 0.111, slope 1.44, ECE 0.135. The published
-formulas were farther from the data: ROMA had Brier 0.209, slope 1.53,
-and ECE 0.220; CPH-I had Brier 0.259, slope 1.11, and ECE 0.303. Both
+formulas were farther from the data (ROMA: Brier 0.209, slope 1.53,
+ECE 0.220; CPH-I: Brier 0.259, slope 1.11, ECE 0.303), and both
 over-predicted risk (calibration-in-the-large $-0.95$ and $-1.42$).
 
-Refitting without HE4 gave 0.925 (scorecard), 0.932 (logistic
-regression), and 0.891 (XGBoost).
+Refitting without HE4 gave 0.925 (scorecard), 0.932 (logistic),
+and 0.891 (XGBoost).
 Multiple imputation by chained equations (MICE) preserved the
 flexible-model ranking (logistic regression 0.926) but degraded the
 scorecard's tertile binning (0.853).
@@ -488,8 +491,8 @@ patients and age for 85\% of Japan patients, so much of the external
 comparison rests on training-set constants; and the Japanese cohort
 consists of healthy volunteers rather than women with masses, so its
 discrimination is not directly comparable with West China's; both
-narrow how broadly the findings apply. (iii) ultrasound-based models could not be tested (the public
-data lack imaging); (iv) the simulation is a simplification, not a
+narrow how broadly the findings apply. (iii) ultrasound-based models could not be tested (no imaging in the public
+data); (iv) the simulation is a simplification, not a
 proof about any specific hospital.
 
 Future work should add ultrasound variables and validate
@@ -567,9 +570,5 @@ pitfalls and recommendations for using machine learning to detect and
 prognosticate for COVID-19 using chest radiographs and CT scans,''
 \emph{Nat. Mach. Intell.}, vol. 3, no. 3, pp. 199--217, 2021.
 \end{thebibliography}
-
-\section*{Appendix A. Glossary of Terms}
-AUROC: area under the ROC curve; CA125: cancer antigen 125; HE4:
-human epididymis protein 4.
 
 \end{document}
