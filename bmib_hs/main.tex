@@ -30,9 +30,9 @@ formulas ROMA and CPH-I, a logistic regression, an integer scorecard,
 and three tree ensembles) were trained on a Chinese dataset
 (349 patients) and tested, unchanged, on two other Asian cohorts (West
 China, 380 patients; Japan, 177). On the 100 West China patients with measured
-biomarkers, the scorecard (AUROC 0.971) matched the logistic regression
-(0.941) and ROMA (0.965); all three confidence
-intervals overlapped, and the simple model never performed worse. A computer simulation,
+biomarkers, the scorecard (area under the ROC curve, 0.971) was not
+significantly different from the logistic regression (0.941) and ROMA
+(0.965), and was numerically the highest. A computer simulation,
 calibrated to the real data, found that flexible models won only when the
 biomarker--cancer relationship stayed constant across hospitals; under
 concept drift, the simple scorecard won. We demonstrate that for small clinical datasets subject to real-world
@@ -82,12 +82,13 @@ patient populations differ.
 \subsection{Data}
 
 Three public, anonymized datasets were used
-\cite{dataset1,dataset2,machida2023}. They are the only public,
-de-identified cohorts with CA125, HE4, and confirmed diagnoses; they
-are a training cohort from Changzhou,
+\cite{dataset1,dataset2,machida2023}. Institutional review board approval was not required, because only
+public, de-identified data were re-analyzed; the cohorts are a
+training cohort from Changzhou,
 Jiangsu, China (349 patients; 171 ovarian cancers, 178 benign masses;
 Mendeley Data, doi:10.17632/th7fztbrv9.11, released with the study
-``Using machine learning to predict ovarian cancer''), a second Chinese
+``Using machine learning to predict ovarian cancer''~\cite{lu2020}), a
+second Chinese
 cohort from the West China Second University Hospital of Sichuan
 University, Chengdu (380 patients; 188 cancers, 192 benign cysts;
 figshare, doi:10.6084/m9.figshare.28831256, collected 2024), and a
@@ -98,8 +99,7 @@ doi:10.6084/m9.figshare.24235450, supplement to
 CA125
 (U/mL), HE4 (pmol/L), age, and menopausal status. The source files are
 \texttt{chinese training dataset(All Raw Data).csv},
-\texttt{west\_china.xlsx} (Ovarian Cancer and Ovarian Cysts sheets),
-and \texttt{japanese.xlsx} (Healthy women and Patients sheets);
+\texttt{west\_china.xlsx}, and \texttt{japanese.xlsx};
 \texttt{src/clean\_data.py} harmonizes them into the three processed
 files used by every analysis. In the training cohort,
 scattered missing biomarker values were filled by each feature's
@@ -108,10 +108,9 @@ patients and age was not recorded for 85\% of Japan patients; these
 external gaps were filled with the training-set medians, computed once
 and frozen, so that no statistic is ever computed on a validation
 cohort.
-The Japanese cohort is therefore treated strictly as a specificity
-stress test, not as external validation of the triage tool: AUROC is
-reported separately, and its metrics are never pooled with West
-China's to support clinical claims. The primary
+It is therefore a specificity stress test, not external validation
+of the triage tool: AUROC is reported separately and never pooled with
+West China's to support clinical claims. The primary
 West China analyses use the 100 patients with measured HE4 (63 cancers,
 37 benign), so that the external result rests on measured biology rather
 than imputed constants; the 280 excluded patients (125 cancers, 155
@@ -283,9 +282,8 @@ ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
 As a discrimination benchmark, a random-effects
 (DerSimonian--Laird) meta-analysis with paired bootstrap tests across
 the two external cohorts gave a pooled scorecard-minus-ROMA difference
-of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$). The scorecard
-also exceeded every tree ensemble (all $p$ at most 0.002), and it did
-not differ from the logistic regression ($-0.005$; $p=0.55$). After
+of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$). It also exceeded every tree ensemble (all $p$ at most 0.002) and
+did not differ from the logistic regression ($-0.005$; $p=0.55$). After
 Holm--Bonferroni correction, the scorecard--ROMA difference remained
 significant (adjusted $p=0.012$), as did the ensemble comparisons ($p$
 at most 0.010).
@@ -296,10 +294,8 @@ comparison was heterogeneous ($I^2=79\%$).
 Within Japan, 86\% of healthy women but only 30\% of cancer patients
 fell into the lowest bins of both markers.
 
-Per-feature Kolmogorov--Smirnov shifts from the training
-distribution averaged 0.22 (West China) and 0.50 (Japan). The West
-China cohort had higher CA125 (65.1 versus 49.3 U/mL), and the Japanese
-volunteers had far lower markers (CA125 15.1, HE4 33.8).
+The West China cohort had higher CA125 (65.1 versus 49.3 U/mL), and
+the Japanese volunteers had far lower markers (CA125 15.1, HE4 33.8).
 
 \begin{table}[!t]
 \caption{AUROC (95\% CI) by model and cohort, bootstrap means over
@@ -307,8 +303,7 @@ volunteers had far lower markers (CA125 15.1, HE4 33.8).
 HE4 (primary external benchmark); West: the full 74\%-imputed cohort
 ($N=380$, co-primary analysis); Japan: healthy volunteers (specificity
 stress test). Setting A (defaults) ensembles scored 0.921/0.922/0.910
-(CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792 (Japan). Bold: highest per cohort, or statistically
-indistinguishable from it (paired bootstrap).}
+(CC), 0.887/0.879/0.879 (West), 0.734/0.749/0.792 (Japan). Bold: highest per cohort, or indistinguishable from it.}
 \label{tab:auroc}
 \centering
 \begin{tabular}{@{}lccc@{}}
@@ -332,28 +327,25 @@ Random Forest & \shortstack{0.930\\[-0.5ex]{\scriptsize(0.871--0.979)}} & \short
 \includegraphics[width=\columnwidth]{figures/fig1_auroc}
 \caption{External validation AUROC, 100 West China patients with
 measured HE4 (63 cancers). Dots: bootstrap means with 95\% CIs (2{,}000
-resamples). Models ordered by increasing complexity. Dashed line: AUROC 0.5
-(chance).}
+resamples). Models ordered by increasing complexity.}
 \label{fig:ladder}
 \end{figure}
 
 \subsection{Decision consequences}
 \label{sec:results}
 
-In the primary weighted-harm analysis (Q2: post-recalibration
-performance; Table~\ref{tab:harm}, Figure~\ref{fig:cons}), every model
-was within-cohort recalibrated. The scorecard's minimum harm per 100
-women was below recalibrated ROMA and CPH-I at weights up to 5 (at
-$w=1$: 12.1, versus 14.7 and 15.0). At $w=10$ it remained slightly
-below recalibrated ROMA (45.0 versus 45.8). At $w=50$, both
-recalibrated formulas fell below the scorecard (ROMA 45.8, CPH-I 50.3,
-versus 59.5). The logistic regression was lowest at every weight (9.7
-to 46.6).
+In the primary weighted-harm analysis (Q2; Table~\ref{tab:harm},
+Figure~\ref{fig:cons}), every model was within-cohort recalibrated. The scorecard's minimum harm per 100
+women was below recalibrated ROMA and CPH-I at weights up to 5 (12.1
+versus 14.7 and 15.0 at $w=1$). At $w=50$, both recalibrated formulas
+fell below the scorecard (ROMA 45.8, CPH-I 50.3, versus 59.5). The
+logistic regression was lowest at weights up to 10; at $w=50$,
+recalibrated ROMA was lowest (45.8).
 
-As the Q1 decision consequence (unchanged transport), at its high-risk
-tier (score $\ge +1$) the scorecard missed 47 of 188 cancers with 5
-false-positive referrals, while the published cutpoints missed 82 (ROMA)
-and 48 (CPH-I) of 188 cancers.
+As the Q1 decision consequence (unchanged transport), the
+scorecard's high-risk tier (score $\ge +1$) missed 47 of 188 cancers
+with 5 false positives, versus 82 (ROMA) and 48 (CPH-I) at the
+published cutpoints.
 
 \begin{figure}[!t]
 \centering
@@ -371,11 +363,10 @@ Table~\ref{tab:harm}.}
 \end{figure}
 
 \begin{table}[!t]
-\caption{Minimum net harm on West China ($N=380$), in harm points
-per 100 women, at each exchange-rate weight $w$: harm $=w\times$
-(missed cancers per 100 women) $+$ (unnecessary referrals per 100
-women), minimized over the swept threshold grid; treating everyone
-costs 50.5 at every weight. Lower is better. Q2 rows: scorecard,
+\caption{Minimum net harm on West China ($N=380$) at exchange-rate
+weight $w$: harm $=w\times$missed$+$unnecessary per 100 women,
+minimized over the swept thresholds; treating everyone costs 50.5 at
+every weight. Lower is better. Q2 rows: scorecard,
 ROMA, and CPH-I are within-cohort recalibrated; the logistic regression
 and XGBoost are shown as fitted. Q1 published-scale harms: ROMA
 15.0/43.4/45.8/45.8; CPH-I 15.0/51.3/64.7/159.5.}
@@ -398,17 +389,20 @@ Treat all (reference) & 50.5 & 50.5 & 50.5 & 50.5\\
 \subsection{Calibration and missing-data checks}
 
 For calibration on the imputed West China cohort ($N=380$), the
-recalibrated
-scorecard had Brier 0.097, a probability-scale calibration slope of
-1.00, and expected calibration error (ECE) of 0.042; the logistic
-regression had Brier 0.111, slope 1.44, and ECE 0.135. The published
+scorecard was recalibrated by refitting its logistic mapping on West
+China; the logistic regression was shown as fitted on training, and the
+formulas at published scales. Because fitting and evaluation share the
+cohort, these are apparent-calibration figures, not prospective ones.
+The recalibrated scorecard had Brier 0.097, a probability-scale
+calibration slope of 1.00, and expected calibration error (ECE) of
+0.042; the logistic regression had Brier 0.111, slope 1.44, and ECE
+0.135. The published
 formulas were farther from the data: ROMA had Brier 0.209, slope 1.53,
 and ECE 0.220; CPH-I had Brier 0.259, slope 1.11, and ECE 0.303. Both
 over-predicted risk (calibration-in-the-large $-0.95$ and $-1.42$).
 
 Refitting without HE4 gave 0.925 (scorecard), 0.932 (logistic
-regression), and 0.891 (XGBoost) on the imputed cohort, agreeing with
-the complete-case ranking (Table~\ref{tab:auroc}).
+regression), and 0.891 (XGBoost).
 Multiple imputation by chained equations (MICE) preserved the
 flexible-model ranking (logistic regression 0.926) but degraded the
 scorecard's tertile binning (0.853), motivating the complete-case
@@ -457,9 +451,9 @@ matched or slightly exceeded it on the imputed cohort (0.936 vs.\
 decisions: the published cutpoints missed 82 of 188 cancers versus 47
 for the locally fitted scorecard, and with all models recalibrated its
 minimum harm stayed lowest up to 5:1. Third, on transportability:
-the simulation
-shows one concrete theoretical mechanism by which complexity can hurt
-when the training structure does not persist.
+the simulation shows that flexible models exploit interaction and
+nonlinear patterns that do not persist; when those patterns were
+removed, the scorecard had the highest AUROC in 22 of 24 cells.
 
 
 
@@ -470,10 +464,10 @@ imputed results agreed. (iii) ultrasound-based models could not be tested (the p
 data lack imaging); (iv) the simulation is a simplification, not a
 proof about any specific hospital.
 
-Future work should add ultrasound variables, validate prospectively,
-and test other tumor markers. In short, a hand-computable integer
-scorecard can match far more complex models, miss fewer cancers than
-off-the-shelf formulas, and stay fully transparent.
+Future work should add ultrasound variables and validate
+prospectively. In short, a hand-computable scorecard can match far
+more complex models, miss fewer cancers than off-the-shelf formulas,
+and stay fully transparent.
 
 \begin{thebibliography}{00}
 \bibitem{moore2011} R. G. Moore, M. C. Miller, P. Disilvestro, et al.,
@@ -537,12 +531,14 @@ figshare, doi:10.6084/m9.figshare.28831256.
 T. Kimura, M. Murakami, and Y. Abe, ``Revised cut-off value of human
 epididymis protein 4 enhances its use as an ovarian tumor marker,''
 \emph{Gynecol. Obstet. Invest.}, vol. 88, no. 6, pp. 349--358, 2023.
+\bibitem{lu2020} M. Lu, Z. Fan, B. Xu, et al., ``Using machine learning
+to predict ovarian cancer,'' \emph{Int. J. Med. Inform.}, vol. 141,
+p. 104195, 2020.
 \end{thebibliography}
 
 \section*{Appendix A. Glossary of Terms}
-AUROC: area under the receiver operating characteristic curve; CA125:
-cancer antigen 125 (U/mL); HE4: human epididymis protein 4 (pmol/L);
-ROMA: Risk of Ovarian Malignancy Algorithm; CPH-I: Copenhagen Index;
-ECE: expected calibration error; DCA: decision curve analysis.
+AUROC: area under the ROC curve; CA125: cancer antigen 125; HE4:
+human epididymis protein 4; ROMA/CPH-I: published ovarian-malignancy
+formulas.
 
 \end{document}
