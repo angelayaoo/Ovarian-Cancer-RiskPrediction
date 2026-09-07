@@ -220,16 +220,15 @@ def main():
                 zorder=3)
         ax.scatter([v], [y], s=44, color=FAMILY[key], edgecolor='black',
                    lw=0.7, zorder=4)
-        ax.text(1.012, y, f'{v:.2f}', va='center', ha='left', fontsize=8.8,
+        ax.text(1.012, y, f'{v:.2f}', va='center', ha='left', fontsize=8,
                 color='#222222', zorder=5)
     ax.axvline(0.5, color='grey', ls='--', lw=0.9, zorder=1)
     ax.set_yticks(ys)
-    ax.set_yticklabels([r[0] for r in rows], fontsize=9.5)
+    ax.set_yticklabels([r[0] for r in rows], fontsize=8)
     ax.tick_params(axis='y', length=0)
-    ax.tick_params(axis='x', labelsize=9.5)
+    ax.tick_params(axis='x', labelsize=8)
     ax.set_xlim(0.46, 1.08)
-    ax.set_xlabel('External validation AUROC, West China\n'
-                  'complete cases (63 cancers, 37 benign)', fontsize=9.5,
+    ax.set_xlabel('Area under the ROC curve', fontsize=8,
                   linespacing=1.3, labelpad=22)
     ax.grid(axis='x', alpha=0.25, ls='--', zorder=0)
     handles = [
@@ -243,7 +242,7 @@ def main():
                mec='black', mew=0.5, label='Simple rule'),
     ]
     ax.legend(handles=handles, loc='upper center',
-              bbox_to_anchor=(0.5, -0.10), ncol=2, fontsize=9.5,
+              bbox_to_anchor=(0.5, -0.10), ncol=2, fontsize=8,
               frameon=False, columnspacing=1.6, handletextpad=0.6,
               handlelength=1.2)
     fig.subplots_adjust(left=0.38, right=0.97, top=0.97, bottom=0.30)
@@ -289,14 +288,14 @@ def main():
     ax.plot(ts * 100, nb_all, ls='--', lw=1.3, color='#555555', zorder=2,
             label='Treat all')
     ax.axhline(0, color='#555555', lw=0.8, zorder=1, label='Treat none')
-    ax.set_xlabel('Threshold probability (%)', fontsize=10)
-    ax.set_ylabel('Net benefit', fontsize=10)
+    ax.set_xlabel('Threshold probability (%)', fontsize=8)
+    ax.set_ylabel('Net benefit', fontsize=8)
     ax.set_xlim(0, 100)
     ax.set_ylim(-0.02, 0.52)
-    ax.tick_params(labelsize=10)
+    ax.tick_params(labelsize=8)
     ax.grid(alpha=0.25, ls='--', zorder=0)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3,
-              fontsize=9.5, frameon=False, columnspacing=1.8,
+              fontsize=8, frameon=False, columnspacing=1.8,
               handletextpad=0.6, handlelength=1.6)
     fig.subplots_adjust(left=0.16, right=0.97, top=0.97, bottom=0.32)
     fig.savefig(os.path.join(HS_DIR, 'fig2_cons.png'),
@@ -326,30 +325,30 @@ def main():
         for i in range(nr):
             for j in range(nc):
                 ax.text(j + 1, i + 1, f'{diff[i, j]:+.2f}', ha='center',
-                        va='center', fontsize=9.2, zorder=4,
+                        va='center', fontsize=8, zorder=4,
                         path_effects=[pe.withStroke(linewidth=1.4,
                                                     foreground='white')])
-        ax.set_title(lab, fontsize=10, fontweight='bold', pad=6)
+        ax.set_title(lab, fontsize=9, fontweight='bold', pad=6)
         ax.set_xlim(0.6, nc + 1.4)
         ax.set_ylim(0.6, nr + 1.4)
         ax.set_xticks(np.arange(nc) + 1)
-        ax.set_xticklabels(['100', '200', '400', '800'], fontsize=9.2)
+        ax.set_xticklabels(['100', '200', '400', '800'], fontsize=8)
         ax.set_yticks(np.arange(nr) + 1)
-        ax.set_yticklabels(['0', '0.5', '1'], fontsize=9.2)
+        ax.set_yticklabels(['0', '0.5', '1'], fontsize=8)
         ax.tick_params(length=0)
-        ax.set_xlabel('Training samples', fontsize=9.2)
+        ax.set_xlabel('Training samples', fontsize=8)
         if ax is axes[0]:
-            ax.set_ylabel('Distribution shift', fontsize=9.2)
+            ax.set_ylabel('Distribution shift', fontsize=8)
         else:
             ax.tick_params(axis='y', labelleft=False)
     cax = fig.add_axes([0.30, 0.03, 0.40, 0.06])
     cb = fig.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap='RdBu_r'),
                       cax=cax, orientation='horizontal',
                       ticks=[-0.10, -0.05, 0.0, 0.05, 0.10])
-    cb.ax.tick_params(labelsize=9.5)
+    cb.ax.tick_params(labelsize=8)
     cb.outline.set_linewidth(0.5)
     cb.set_label('Favors scorecard     Ensemble average minus scorecard AUROC'
-                 '     Favors ensembles', fontsize=9.5, labelpad=5)
+                 '     Favors ensembles', fontsize=8, labelpad=5)
     fig.subplots_adjust(left=0.10, right=0.97, bottom=0.22, top=0.86,
                         wspace=0.22)
     fig.savefig(os.path.join(HS_DIR, 'fig3_regime_col.png'),
