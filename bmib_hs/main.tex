@@ -83,7 +83,7 @@ patient populations differ.
 \subsection{Data}
 
 Three public, anonymized datasets were used
-\cite{dataset1,dataset2,dataset3}: a training cohort from Changzhou,
+\cite{dataset1,dataset2,machida2023}: a training cohort from Changzhou,
 Jiangsu, China (349 patients; 171 ovarian cancers, 178 benign masses;
 Mendeley Data, doi:10.17632/th7fztbrv9.11, released with the study
 ``Using machine learning to predict ovarian cancer''), a second Chinese
@@ -92,7 +92,8 @@ University, Chengdu (380 patients; 188 cancers, 192 benign cysts;
 figshare, doi:10.6084/m9.figshare.28831256, collected 2024), and a
 Japanese cohort from a university hospital in Japan (177 patients; 27
 cancers, 150 healthy women; Karger figshare,
-doi:10.6084/m9.figshare.24235450, 2016--2018). The two Chinese cohorts
+doi:10.6084/m9.figshare.24235450, supplement to
+\cite{machida2023}, 2016--2018). The two Chinese cohorts
 are surgical series of women with pelvic masses; the Japanese cohort
 contains healthy volunteers. Each patient has four features: CA125
 (U/mL), HE4 (pmol/L), age, and menopausal status. In West China, HE4 was
@@ -445,7 +446,8 @@ matched or slightly exceeded it on the imputed cohort (0.936 vs.\
 0.929), and CPH-I won the Japan stress test (0.920). Second, on
 decisions: the published cutpoints missed 82 of 188 cancers versus 47
 for the locally fitted scorecard, and with all models recalibrated its
-minimum harm stayed lowest up to 5:1. Third, on why: the simulation
+minimum harm stayed lowest up to 5:1. Third, on transportability:
+the simulation
 shows one concrete theoretical mechanism by which complexity can hurt
 when the training structure does not persist.
 
@@ -491,11 +493,11 @@ models for optimized medical scoring systems,'' \emph{Mach. Learn.},
 vol. 102, no. 3, pp. 349--391, 2016.
 \bibitem{rudin2019} C. Rudin, ``Stop explaining black box machine learning
 models for high stakes decisions and use interpretable models instead,''
-\emph{Nat. Mach. Intell.}, vol. 1, pp. 206--215, 2019.
+\emph{Nat. Mach. Intell.}, vol. 1, no. 5, pp. 206--215, 2019.
 \bibitem{roberts2021} M. Roberts, D. Driggs, M. Thorpe, et al., ``Common
 pitfalls and recommendations for using machine learning to detect and
 prognosticate for COVID-19 using chest radiographs and CT scans,''
-\emph{Nat. Mach. Intell.}, vol. 3, pp. 199--217, 2021.
+\emph{Nat. Mach. Intell.}, vol. 3, no. 3, pp. 199--217, 2021.
 \bibitem{wynants2020} L. Wynants, B. Van Calster, G. S. Collins, et al.,
 ``Prediction models for diagnosis and prognosis of COVID-19: systematic
 review and critical appraisal,'' \emph{BMJ}, vol. 369, p. m1328, 2020.
@@ -528,8 +530,10 @@ risk and hospital 30-day readmission,'' in \emph{Proc. 21st ACM SIGKDD},
 doi:10.17632/th7fztbrv9.11.
 \bibitem{dataset2} West China ovarian cancer vs.\ ovarian cyst dataset,
 figshare, doi:10.6084/m9.figshare.28831256.
-\bibitem{dataset3} Revised HE4 cut-off value dataset, Karger figshare,
-doi:10.6084/m9.figshare.24235450.
+\bibitem{machida2023} H. Machida, T. Hirakawa, K. Tsunekawa,
+T. Kimura, M. Murakami, and Y. Abe, ``Revised cut-off value of human
+epididymis protein 4 enhances its use as an ovarian tumor marker,''
+\emph{Gynecol. Obstet. Invest.}, vol. 88, no. 6, pp. 349--358, 2023.
 \end{thebibliography}
 
 \section*{Appendix A. Glossary of Terms}
