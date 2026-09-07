@@ -35,8 +35,8 @@ formulas ROMA and CPH-I, a logistic regression, an integer scorecard,
 and three tree ensembles) were trained on a Chinese dataset
 (349 patients) and applied unchanged elsewhere. External evidence is
 deliberately narrow: the primary benchmark is 100 West China patients
-with measured biomarkers (63 cancers), reported alongside the same
-cohort with HE4 imputed for 74 percent (380 patients); a Japanese cohort
+with measured biomarkers (63 cancers), alongside the same cohort with
+74 percent imputed HE4 (380 patients); a Japanese cohort
 (177 patients, 150 healthy women) serves only as a specificity stress
 test, not as an external validation cohort. On the 100 complete cases,
 the scorecard (area under the ROC curve, 0.971) was numerically highest
@@ -76,8 +76,8 @@ survives a move to a new hospital, and whether a bedside-computable
 scorecard matches the complex alternatives. We trained eight models on
 one Chinese cohort, applied them unchanged to a second Chinese cohort
 and a Japanese specificity stress test, and measured discrimination,
-calibration, and decision consequences, plus a simulation exploring
-\emph{when} complex models help.
+calibration, and decision consequences, plus a simulation of when
+complex models help.
 
 \section{Methods}
 
@@ -99,18 +99,19 @@ pmol/L, age, menopausal status). The raw files are
 \texttt{chinese training dataset(All Raw Data).csv},
 \texttt{west\_china.xlsx}, and \texttt{japanese.xlsx};
 \texttt{src/clean\_data.py} harmonizes them into the
-three processed files used by every analysis. In the training cohort,
-scattered missing biomarker values were filled by feature-wise cohort
-medians; externally, HE4 was not measured for 74\% of West China
-patients and age was not recorded for 85\% of Japan patients; these
-external gaps were filled with the training-set medians, computed once
-and frozen, so that no statistic is ever computed on a validation
-cohort. The external validation evidence is therefore deliberately
+three processed files used by every analysis. Scattered missing training biomarker values were filled by feature-wise
+cohort medians; externally, HE4 was missing for 74\% of West China
+patients and age for 85\% of Japan patients, and these gaps were filled
+with the frozen training-set medians, so no statistic is computed on a
+validation cohort. The external validation evidence is therefore deliberately
 narrow. The primary West China analyses use the 100 patients with
 measured HE4 (63 cancers, 37 benign). Complete-case analysis is primary
 for three reasons: (i) the alternative, training-median imputation,
 replaces 74\% of HE4 values with one constant, which cannot reflect
-between-patient variation and artificially narrows uncertainty; (ii)
+between-patient variation, forces most patients into a single HE4 bin,
+and can pull discrimination toward the training distribution, so its
+narrower uncertainty is artificial; complete-case analysis avoids this
+bias at the cost of a smaller sample; (ii)
 multiple imputation by chained equations (MICE,
 Section~\ref{sec:calibration}) degrades the scorecard's tertile binning
 (0.853), so imputed benchmarks depend on the imputation method; and
@@ -120,7 +121,7 @@ similar age, CA125, and menopausal rates.
 The 74\%-imputed full cohort ($N=380$) is reported alongside as a
 co-primary analysis. Because it contains 150 healthy
 women and only 27 cancers, the Japanese cohort is treated as a
-specificity stress test rather than an external validation of the triage
+specificity stress test rather than external validation of the triage
 tool: its AUROC is reported separately in Table~\ref{tab:auroc} and
 enters the pooled analysis only as a discrimination sensitivity check,
 never to support pooled decision or clinical claims.
@@ -155,8 +156,8 @@ to a percentage by the logistic transform, with published cutoffs 13.1\%
 (pre) and 27.7\% (post)~\cite{moore2011}. CPH-I uses $-14.0647+1.0649
 \log_2(\mathrm{HE4})+0.6050\log_2(\mathrm{CA125})+0.2672\times
 \mathrm{age}/10$, likewise logistic-transformed, with cutoff
-7\%~\cite{karlsen2015}. Units: HE4 in pmol/L, CA125 in U/mL, age in
-years; menopause is the dataset's binary postmenopausal indicator;
+7\%~\cite{karlsen2015}. Units: HE4 pmol/L, CA125 U/mL, age years;
+menopause is the dataset's binary postmenopausal indicator;
 imputed HE4 uses the frozen training median. Within-cohort recalibration
 means fitting, on West China, a logistic regression of the outcome on
 the formula's probability as the sole covariate.
@@ -170,9 +171,9 @@ confined to training folds and the external cohorts never entering
 selection (XGBoost 100 trees, depth 3, learning rate 0.03; CatBoost 500
 iterations, depth 4, learning rate 0.03; Random Forest 500 trees,
 depth 6, minimum leaf size 2).
-Setting B is the primary comparison (Table~\ref{tab:auroc}; Setting A
-in the table footnote). All models were trained once on the Chinese
-cohort; every parameter, bin cutpoint, and threshold was frozen before
+Setting B is primary (Table~\ref{tab:auroc}; Setting A in the
+footnote). All models were trained once on the Chinese
+cohort; every parameter, cutpoint, and threshold was frozen before
 external evaluation.
 
 \begin{table}[!t]
@@ -202,14 +203,14 @@ preserve the paired structure across models and keep Monte Carlo error
 below 0.001 AUROC. The prespecified primary comparison is the scorecard
 versus
 ROMA, tested per cohort and summarized by a DerSimonian--Laird
-random-effects model~\cite{dersimonian1986} across the imputed West
-China cohort and the Japanese stress-test cohort; with only two cohorts
+random-effects model~\cite{dersimonian1986} across the two external
+cohorts; with only two cohorts
 the heterogeneity estimate is imprecise, so per-cohort paired tests
 are the primary evidence and the pooled estimate is a summary. All
 other comparisons are secondary, and effect sizes with
 95\% CIs are emphasized over p-values. Calibration was measured with the Brier
-score and calibration-in-the-large. Decision value was quantified with a weighted-harm analysis
-(Section~\ref{sec:results}): decision thresholds were swept over 1--100\%,
+score and calibration-in-the-large. Decision value used a weighted-harm analysis
+(Section~\ref{sec:results}): thresholds were swept over 1--100\%,
 and for exchange rates $w\in\{1,5,10,50\}$ the threshold minimizing
 $H=w\times\text{missed}+\text{unnecessary}$ per 100 women was identified.
 We distinguish Q1 (does each model transport unchanged?) from Q2 (how
@@ -220,7 +221,7 @@ unnecessary referral ($w=1$) to valuing a missed cancer 50 times as much
 ($w=50$); they characterize sensitivity to relative error costs. All design choices preceded external
 evaluation: the four features are those shared by all three cohorts and
 required by the published formulas (the primary comparator is ROMA, the
-most widely used published formula); the primary comparison (scorecard
+most-used published formula); the primary comparison (scorecard
 versus ROMA) and the four weights were pre-specified; only the
 scorecard's bin count and regularization were selected among
 12 pre-specified candidates (bins 3/4/5/7 with $C=0.5/1.5/5.0$) by
@@ -251,7 +252,7 @@ one-command pipeline (\texttt{reproduce.sh}) and pinned dependencies.
 \subsection{Simulation}
 
 The simulation is an illustrative counterexample, not an explanation
-of the observed real-world results, and no general claim about real
+of the real-world results, and no general claim about real
 concept drift is made from it. A simulation calibrated to the Chinese
 data drew biomarkers from class-conditional lognormal distributions and
 generated the cancer label from the logistic model
@@ -264,9 +265,14 @@ generated the cancer label from the logistic model
 \end{equation}
 where $z_1$, $z_2$, and $z_3$ are standardized log CA125, log HE4,
 and age, and $d\in[0,1]$ sets the drift: $d=0$ keeps
-the interaction and nonlinear terms, $d=1$ removes them. The
-grid crossed training sizes $n\in\{100,200,400,800\}$, distribution
-shifts $s\in\{0,0.5,1.0\}$, measurement noise $\{0\%,50\%\}$,
+the interaction and nonlinear terms, $d=1$ removes them. Clinically,
+$d=1$ approximates a hospital where how the two markers combine with
+age differs---for example, different assay calibration across
+laboratories or a different patient mix---so interactions learned in
+one cohort no longer hold; it is a stylized proxy, not a mechanistic
+model of any hospital. The
+grid crossed training sizes $n\in\{100,200,400,800\}$, shifts
+$s\in\{0,0.5,1.0\}$, noise $\{0\%,50\%\}$,
 and drift levels $d\in\{0,1\}$, with
 20 replicates per cell.
 
@@ -280,20 +286,19 @@ ROMA, tuned XGBoost, and the logistic regression within overlapping CIs
 (Table~\ref{tab:auroc}, West CC column; Fig.~\ref{fig:ladder}).
 
 On the co-primary 74\%-imputed cohort ($N=380$) the ranking was
-similar (logistic regression 0.936, scorecard 0.929, tuned
-ensembles 0.877--0.895; Table~\ref{tab:auroc}, West column).
+similar (logistic regression 0.936, scorecard 0.929, ensembles
+0.877--0.895).
 
 As a discrimination benchmark, a random-effects
 (DerSimonian--Laird) meta-analysis with paired bootstrap tests pooling
-the imputed West China cohort ($N=380$) and the Japanese stress-test
-cohort ($n=177$) gave a pooled scorecard-minus-ROMA difference
+the imputed West China cohort and the Japanese stress-test
+cohort gave a pooled scorecard-minus-ROMA difference
 of $+0.043$ AUROC (95\% CI 0.013 to 0.074; $p=0.006$). The scorecard
 also exceeded each tuned tree ensemble (pooled differences $+0.036$,
 $+0.055$, and $+0.033$ for XGBoost, CatBoost, and Random Forest; all
 $p\le0.016$) and did not differ from the logistic regression
 ($-0.005$; $p=0.55$). After Holm--Bonferroni correction across the five
-prespecified pooled comparisons (scorecard versus ROMA, the logistic
-regression, and the three tuned tree ensembles), the scorecard--ROMA
+prespecified pooled comparisons, the scorecard--ROMA
 difference remained significant (adjusted $p=0.023$), as did all three
 ensemble comparisons (adjusted $p$ at most 0.031). These pooled
 comparisons combine the imputed cohort with a stress-test cohort and are
@@ -301,7 +306,10 @@ secondary to the complete-case benchmark above.
 
 In the Japan specificity stress test ($n=177$, of whom only 27 have
 cancer), CPH-I was highest (0.920; Table~\ref{tab:auroc}, Japan column),
-with wide confidence intervals given so few cancers.
+with wide confidence intervals. This cohort is
+strictly a specificity stress test, not external validation: it
+comprises healthy volunteers, not women with masses, so its AUROC is
+not a standard external-validation metric.
 
 \begin{table}[!t]
 \caption{AUROC (95\% CI) by model and cohort.}
@@ -328,17 +336,16 @@ Random Forest & \auc{0.930}{0.871--0.979} & \auc{0.895}{0.858--0.931} & \auc{0.8
 
 \vspace{2pt}
 {\footnotesize CC: complete case; CI: confidence interval. West CC
-($n{=}100$): measured-HE4 complete cases (primary benchmark); West
-($N{=}380$): the 74\%-imputed cohort (co-primary); Japan ($n{=}177$):
-150 healthy women and 27 cancers (specificity stress test). Tree
-ensembles are Setting B (internally CV-tuned); Setting A (defaults)
-scored 0.921/0.922/0.910 (CC), 0.887/0.879/0.879 (West),
-0.736/0.750/0.794 (Japan).}
+($n{=}100$): measured-HE4 complete cases (primary); West ($N{=}380$):
+74\%-imputed (co-primary); Japan ($n{=}177$): 150 healthy women and
+27 cancers (specificity stress test). Tree ensembles are Setting B
+(CV-tuned); Setting A (defaults) scored 0.921/0.922/0.910 (CC),
+0.887/0.879/0.879 (West), 0.736/0.750/0.794 (Japan).}
 \end{table}
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.88\columnwidth]{figures/fig1_auroc}
+\includegraphics[width=\columnwidth]{figures/fig1_auroc}
 \caption{External validation AUROC, 100 West China patients with
 measured HE4 (63 cancers); dots show bootstrap means and 95\% CIs
 (2{,}000 resamples).}
@@ -356,9 +363,9 @@ weights up to 5 (12.1 vs.\ 14.7 and 15.0 at $w=1$); at $w=50$ both fell
 below it (45.8 and 50.3 versus 59.5). The
 logistic regression was lowest at weights up to 10; at $w=50$,
 recalibrated ROMA was lowest (45.8). Reported minima are over the swept
-thresholds; where a minimum exceeds the treat-all reference (e.g.,
-XGBoost at $w=50$), treating everyone dominates that model (reference
-row in Table~\ref{tab:harm}).
+thresholds; where a minimum exceeds treat-all (e.g., XGBoost at
+$w=50$), treating everyone dominates (reference row in
+Table~\ref{tab:harm}).
 
 As the Q1 decision consequence, the
 scorecard's high-risk tier (score $\ge +1$) missed 47 of 188 cancers
@@ -367,7 +374,7 @@ published cutpoints.
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=0.95\columnwidth]{figures/fig2_cons_col}
+\includegraphics[width=\columnwidth]{figures/fig2_cons_col}
 \caption{Decision curve analysis on West China (N~$=$~380): net benefit
 against the decision threshold, with treat-all (dashed) and treat-none
 (horizontal axis) references; the shaded band marks the range of
@@ -380,10 +387,10 @@ omitted.}
 \begin{table}[!t]
 \caption{Minimum net harm on West China ($N=380$) at exchange-rate
 weight $w$: harm $=w\times$missed$+$unnecessary per 100 women,
-minimized over the swept thresholds. Q2 rows: scorecard, ROMA, and
-CPH-I are within-cohort recalibrated; the logistic regression and
-XGBoost are shown as fitted. Q1 published-scale harms: ROMA
-15.0/43.4/45.8/45.8; CPH-I 15.0/51.3/64.7/159.5.}
+minimized over swept thresholds. Q2 rows: scorecard, ROMA, CPH-I
+within-cohort recalibrated (logistic regression and XGBoost as fitted).
+Q1 published-scale harms: ROMA 15.0/43.4/45.8/45.8; CPH-I
+15.0/51.3/64.7/159.5.}
 \label{tab:harm}
 \centering
 \begin{tabular}{lcccc}
@@ -407,7 +414,7 @@ scorecard's logistic mapping was refit on that same cohort and evaluated
 there, so its calibration figures are apparent, not prospective; the
 logistic regression is shown frozen from training and the formulas at
 published scales, so only the scorecard's figures can be inflated by
-the shared fit-and-evaluate data.
+the shared data.
 The recalibrated scorecard had Brier 0.097, calibration slope 1.00,
 and expected calibration error (ECE) 0.042; the logistic regression had
 Brier 0.111, slope 1.44, ECE 0.135; ROMA had Brier 0.209, slope 1.53,
@@ -417,7 +424,7 @@ $-1.42$).
 
 Multiple imputation by chained equations (MICE) preserved the
 flexible-model ranking (logistic regression 0.926) but degraded the
-scorecard's tertile binning (0.853; see Section~\ref{sec:data}).
+scorecard's binning (0.853; see Section~\ref{sec:data}).
 
 \subsection{Robustness and simulation}
 
@@ -436,8 +443,8 @@ favors the ensembles, blue the scorecard); axes: training samples
 \end{figure*}
 
 In the simulation (Fig.~\ref{fig:regime}), at 50\% noise the
-ensemble-average minus-scorecard gap averaged $+0.018$ at drift level
-$d=0$ of \eqref{eq:eta} and $-0.018$ at $d=1$; at $d=1$ the scorecard
+ensemble-average minus-scorecard gap averaged $+0.018$ at $d=0$ and
+$-0.018$ at $d=1$ of \eqref{eq:eta}; at $d=1$ the scorecard
 had the highest AUROC in 22 of 24 cells. Across factors, the gap spread
 most across drift levels (0.033), then distribution shift (0.012),
 training size (0.003), and noise (0.002).
@@ -447,8 +454,8 @@ training size (0.003), and noise (0.002).
 
 Across 20 repeated five-fold cross-validations, the scorecard's internal
 AUROC was 0.906 (SD 0.003) and the three-bin configuration was selected
-in 18 of 20 repeats; in-sample ensembles fitted at 0.991--1.000,
-0.094--0.117 below their CV AUROC.
+in 18 of 20 repeats; in-sample ensembles fitted 0.094--0.117 above
+their CV AUROC.
 
 \section{Discussion and Conclusion}
 
@@ -456,15 +463,15 @@ The results show three things, within the limits of the available
 cohorts. First, on discrimination: seven integer weights performed
 no worse than models with thousands of parameters; the scorecard was
 numerically best on the 100
-complete cases (0.971), similar to the logistic regression on the
-imputed cohort (0.929 vs.\ 0.936), and CPH-I won the
+complete cases (0.971), was similar to the logistic regression on the
+imputed cohort, and CPH-I won the
 Japan stress test (0.920). Second, on decisions: the published cutpoints
 missed 82 of 188 cancers versus 47 for the locally fitted scorecard,
 whose minimum harm stayed below the recalibrated formulas up to 5:1.
 Third, under the simulated form of
 concept drift examined here, the flexible models' advantage diminished
-and reversed; the simulation does not by itself show that this reversal
-occurs in real hospitals.
+and reversed; the simulation alone does not show this reversal occurs
+in real hospitals.
 
 The main limitations are as follows. (i) The external samples are
 small: the primary complete-case cohort contains 100 patients
@@ -476,21 +483,19 @@ age for 85\% of Japan patients, so much of the external comparison
 rests on training-set constants; and the Japanese cohort consists of
 healthy volunteers rather than women with masses, so its discrimination
 is not directly comparable with West China's; both narrow how broadly
-the findings apply, although complete-case and imputed results agreed.
-(iii) Ultrasound-based models could not be
+the findings apply. (iii) Ultrasound-based models could not be
 tested (the public data lack imaging), and the simulation is a
 simplification, not a proof about any specific hospital.
 
 Future work should add ultrasound variables and validate prospectively
 in larger, multi-center cohorts; on these small cohorts the scorecard
-already performed no worse than far more complex models and missed
-fewer cancers than the off-the-shelf formulas.
+already performed no worse than far more complex models.
 
 \section*{Acknowledgment}
 The authors acknowledge the use of Google Gemini, an AI-based
-assistant, for grammar and language checks and for basic code
-debugging; the authors retain full authority and responsibility for
-the design, methodology, analysis, and all claims of this paper.
+assistant, for grammar checks and basic code debugging; the authors
+retain full authority and responsibility for the design, methodology,
+analysis, and all claims of this paper.
 
 \begin{thebibliography}{00}
 \bibitem{moore2011} R. G. Moore, M. C. Miller, P. Disilvestro, et al.,

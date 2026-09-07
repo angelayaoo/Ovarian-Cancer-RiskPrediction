@@ -205,7 +205,7 @@ def main():
             ('Scorecard', 'Scorecard'), ('Logistic regression', 'Raw LR'),
             ('CatBoost', 'CatBoost'), ('XGBoost', 'XGBoost'),
             ('Random forest', 'Random Forest')]
-    fig, ax = plt.subplots(figsize=(3.5, 3.4))
+    fig, ax = plt.subplots(figsize=(3.5, 2.7))
     ys = np.arange(len(rows))
     for y, (disp, key) in zip(ys, rows):
         if key in tuned:
@@ -220,16 +220,16 @@ def main():
                 zorder=3)
         ax.scatter([v], [y], s=44, color=FAMILY[key], edgecolor='black',
                    lw=0.7, zorder=4)
-        ax.text(1.012, y, f'{v:.2f}', va='center', ha='left', fontsize=8,
+        ax.text(1.012, y, f'{v:.2f}', va='center', ha='left', fontsize=8.8,
                 color='#222222', zorder=5)
     ax.axvline(0.5, color='grey', ls='--', lw=0.9, zorder=1)
     ax.set_yticks(ys)
-    ax.set_yticklabels([r[0] for r in rows], fontsize=8)
+    ax.set_yticklabels([r[0] for r in rows], fontsize=9.5)
     ax.tick_params(axis='y', length=0)
-    ax.tick_params(axis='x', labelsize=8)
+    ax.tick_params(axis='x', labelsize=9.5)
     ax.set_xlim(0.46, 1.08)
     ax.set_xlabel('External validation AUROC, West China\n'
-                  'complete cases (63 cancers, 37 benign)', fontsize=8,
+                  'complete cases (63 cancers, 37 benign)', fontsize=9.5,
                   linespacing=1.3, labelpad=22)
     ax.grid(axis='x', alpha=0.25, ls='--', zorder=0)
     handles = [
@@ -243,9 +243,9 @@ def main():
                mec='black', mew=0.5, label='Simple rule'),
     ]
     ax.legend(handles=handles, loc='upper center',
-              bbox_to_anchor=(0.5, -0.06), ncol=4, fontsize=7, frameon=False,
-              columnspacing=0.9, handletextpad=0.3)
-    fig.subplots_adjust(left=0.32, right=0.97, top=0.97, bottom=0.26)
+              bbox_to_anchor=(0.5, -0.08), ncol=2, fontsize=8.5,
+              frameon=False, columnspacing=0.9, handletextpad=0.3)
+    fig.subplots_adjust(left=0.34, right=0.97, top=0.97, bottom=0.30)
     fig.savefig(os.path.join(HS_DIR, 'fig1_auroc.png'),
                 bbox_inches='tight', pad_inches=0.06, dpi=300)
     plt.close(fig)
@@ -278,7 +278,7 @@ def main():
               'ROMA (recal.)': '-.', 'CPH-I (recal.)': ':'}
     ts = np.linspace(0.01, 0.99, 200)
     prev = float(np.mean(y_w))
-    fig, ax = plt.subplots(figsize=(3.5, 2.9))
+    fig, ax = plt.subplots(figsize=(3.5, 2.4))
     ax.axvspan(7, 30, color='#f2f2f2', zorder=0)
     for mname, p in dca_probs.items():
         nb = nb_curve(y_w, p, ts)
@@ -288,16 +288,16 @@ def main():
     ax.plot(ts * 100, nb_all, ls='--', lw=1.3, color='#555555', zorder=2,
             label='Treat all')
     ax.axhline(0, color='#555555', lw=0.8, zorder=1, label='Treat none')
-    ax.set_xlabel('Threshold probability (%)', fontsize=8)
-    ax.set_ylabel('Net benefit', fontsize=8)
+    ax.set_xlabel('Threshold probability (%)', fontsize=9.5)
+    ax.set_ylabel('Net benefit', fontsize=9.5)
     ax.set_xlim(0, 100)
     ax.set_ylim(-0.02, 0.52)
-    ax.tick_params(labelsize=8)
+    ax.tick_params(labelsize=9.5)
     ax.grid(alpha=0.25, ls='--', zorder=0)
     ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.14), ncol=3,
-              fontsize=7.5, frameon=False, columnspacing=1.1,
+              fontsize=8.5, frameon=False, columnspacing=1.1,
               handletextpad=0.35)
-    fig.subplots_adjust(left=0.13, right=0.97, top=0.97, bottom=0.24)
+    fig.subplots_adjust(left=0.15, right=0.97, top=0.97, bottom=0.27)
     fig.savefig(os.path.join(HS_DIR, 'fig2_cons_col.png'),
                 bbox_inches='tight', pad_inches=0.08, dpi=300)
     plt.close(fig)
@@ -311,7 +311,7 @@ def main():
                           columns='Model', values='Test AUROC mean')
     piv['ens'] = (piv['XGBoost'] + piv['CatBoost'] + piv['Random Forest']) / 3
     norm = TwoSlopeNorm(vmin=-0.10, vcenter=0.0, vmax=0.10)
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.6))
+    fig, axes = plt.subplots(1, 2, figsize=(6.16, 2.8))
     for ax, drift, lab in zip(axes, [0.0, 1.0],
                               ['(a) Stationary structure',
                                '(b) Concept drift']):
@@ -325,30 +325,30 @@ def main():
         for i in range(nr):
             for j in range(nc):
                 ax.text(j + 1, i + 1, f'{diff[i, j]:+.2f}', ha='center',
-                        va='center', fontsize=8, zorder=4,
+                        va='center', fontsize=9.2, zorder=4,
                         path_effects=[pe.withStroke(linewidth=1.4,
                                                     foreground='white')])
-        ax.set_title(lab, fontsize=9, fontweight='bold', pad=6)
+        ax.set_title(lab, fontsize=10, fontweight='bold', pad=6)
         ax.set_xlim(0.6, nc + 1.4)
         ax.set_ylim(0.6, nr + 1.4)
         ax.set_xticks(np.arange(nc) + 1)
-        ax.set_xticklabels(['100', '200', '400', '800'], fontsize=8)
+        ax.set_xticklabels(['100', '200', '400', '800'], fontsize=9.2)
         ax.set_yticks(np.arange(nr) + 1)
-        ax.set_yticklabels(['0', '0.5', '1'], fontsize=8)
+        ax.set_yticklabels(['0', '0.5', '1'], fontsize=9.2)
         ax.tick_params(length=0)
-        ax.set_xlabel('Training samples', fontsize=8)
+        ax.set_xlabel('Training samples', fontsize=9.2)
         if ax is axes[0]:
-            ax.set_ylabel('Distribution shift', fontsize=8)
+            ax.set_ylabel('Distribution shift', fontsize=9.2)
         else:
             ax.tick_params(axis='y', labelleft=False)
     cax = fig.add_axes([0.30, 0.02, 0.40, 0.055])
     cb = fig.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap='RdBu_r'),
                       cax=cax, orientation='horizontal',
                       ticks=[-0.10, -0.05, 0.0, 0.05, 0.10])
-    cb.ax.tick_params(labelsize=8)
+    cb.ax.tick_params(labelsize=9.2)
     cb.outline.set_linewidth(0.5)
     cb.set_label('Favors scorecard   Ensemble average minus scorecard AUROC'
-                 '   Favors ensembles', fontsize=8, labelpad=3)
+                 '   Favors ensembles', fontsize=9.2, labelpad=3)
     fig.subplots_adjust(left=0.10, right=0.97, bottom=0.20, top=0.86,
                         wspace=0.22)
     fig.savefig(os.path.join(HS_DIR, 'fig3_regime_col.png'),
