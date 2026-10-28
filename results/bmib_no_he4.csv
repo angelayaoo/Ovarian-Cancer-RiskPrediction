@@ -1,0 +1,4 @@
+Model,AUROC (no HE4)
+Scorecard,0.925
+Logistic reg.,0.932
+XGBoost,0.891

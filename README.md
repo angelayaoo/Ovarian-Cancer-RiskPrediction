@@ -1,8 +1,8 @@
-﻿# External Validation of an Interpretable Integer Scorecard versus Tree Ensembles for Ovarian Cancer Risk Prediction
+﻿# External Validation of an Interpretable Integer Scorecard versus Logistic Regression and Tree Ensembles for Ovarian Cancer Risk Prediction
 
 **Jiayi Yao** (BASIS Independent Bellevue, Bellevue, WA, USA),
-**Zooey Lane Go Hua** (Issaquah High School, Issaquah, WA, USA),
-**Vritika S Sharma** (Issaquah High School, Issaquah, WA, USA)
+**Vritika S Sharma** (Issaquah High School, Issaquah, WA, USA),
+**Zooey Lane Go Hua** (Issaquah High School, Issaquah, WA, USA)
 
 Submission to the IEEE BIBM 2026 Undergraduate & High School Symposium
 (UGHS)
@@ -14,13 +14,14 @@ logistic regression, a hand-computable integer scorecard, and three tree
 ensembles) are trained once on a Chinese cohort (Changzhou, n = 349) and
 applied unchanged to a second Chinese cohort (West China, n = 380) and to
 a Japanese cohort (n = 177) used as a specificity stress test.
-Complete-case (measured-HE4, n = 100) primary and imputed
+Complete-case (measured-HE4, n = 100; 63% prevalence) primary and imputed
 sensitivity external benchmarks, paired West China comparisons,
 weighted-harm decision analysis, calibration reporting, robustness
-experiments, and an illustrative concept-drift simulation show that an
-interpretable integer scorecard performs no worse than the complex
-models' discrimination on these small cohorts while remaining
-transparent, auditable, and computable by hand.
+experiments, and an illustrative concept-drift simulation support
+parity: the integer scorecard matches the logistic regression and the
+clinical formulas and beats the tuned ensembles on the complete cases,
+with hand-computability as its distinctive asset rather than
+predictive superiority.
 
 ## Environment setup
 
@@ -97,14 +98,19 @@ files.
 
 | Paper item | Produced by |
 |---|---|
-| Table I (integer scorecard) | fitted by `src/bench_lib.py` |
-| Table II (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
-| Table III (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
+| Table I (AUROC + 95% CI) | `src/clinical_comparators.py` + `src/make_bmib_artifacts.py` |
+| Table II (minimum harm) | `src/decision_harm_analysis.py` + `src/make_bmib_artifacts.py` |
 | West China paired differences (complete cases and imputed) | `src/make_bmib_artifacts.py` → `results/bmib_cc_paired.csv`, `results/bmib_west_paired.csv` |
 | Q1 operating points | `src/decision_harm_analysis.py` → `results/decision_consequences.csv`, `results/scorecard_operating_points.csv` |
 | Figures 1--3 | `src/make_bmib_artifacts.py` (+ `src/simulation_study.py` for Fig. 3 data) |
-| Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` |
-| MICE sensitivity | `src/make_bmib_artifacts.py` → `results/bmib_mice.csv` |
+| Calibration slopes/ECE | `src/make_bmib_artifacts.py` → `results/bmib_calibration_slope.csv` (imputed), `results/bmib_cc_calibration.csv` (complete cases, frozen) |
+| MICE sensitivity (all eight models) | `src/make_bmib_artifacts.py` → `results/bmib_mice.csv` |
+| Complete-case operating points | `src/make_bmib_artifacts.py` → `results/bmib_cc_operating.csv` |
+| Japan false-positive rates (150 healthy women) | `src/make_bmib_artifacts.py` → `results/bmib_japan_fpr.csv` |
+| Complete-case vs excluded balance (Fisher test) | `src/make_bmib_artifacts.py` → `results/bmib_cc_balance.csv` |
+| Japan lowest-bin shares and marker medians | `src/make_bmib_artifacts.py` → `results/bmib_japan_descriptives.csv` |
+| No-HE4 three-feature refits | `src/make_bmib_artifacts.py` → `results/bmib_no_he4.csv` |
+| In-sample ensemble fits (vs CV) | `src/make_bmib_artifacts.py` → `results/bmib_insample.csv` |
 
 ## Review policy
 
@@ -119,7 +125,8 @@ this work:
 ```bibtex
 @software{ovarian_complexity_transportability,
   title = {External Validation of an Interpretable Integer Scorecard
-           versus Tree Ensembles for Ovarian Cancer Risk Prediction},
+           versus Logistic Regression and Tree Ensembles for Ovarian
+           Cancer Risk Prediction},
   year = {2026}
 }
 ```

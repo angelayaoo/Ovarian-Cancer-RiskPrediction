@@ -1,0 +1,4 @@
+Model,In-sample AUROC
+XGBoost,1.0
+CatBoost,0.991
+Random Forest,1.0

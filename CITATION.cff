@@ -3,11 +3,11 @@ message: "If you use this software, please cite it as below."
 authors:
   - family-names: "Yao"
     given-names: "Jiayi"
-  - family-names: "Hua"
-    given-names: "Zooey Lane Go"
   - family-names: "Sharma"
     given-names: "Vritika S"
-title: "External Validation of an Interpretable Integer Scorecard versus Tree Ensembles for Ovarian Cancer Risk Prediction"
+  - family-names: "Hua"
+    given-names: "Zooey Lane Go"
+title: "External Validation of an Interpretable Integer Scorecard versus Logistic Regression and Tree Ensembles for Ovarian Cancer Risk Prediction"
 version: 1.1.0
 date-released: 2026-09-06
 url: "https://github.com/angelayaoo/Ovarian-Cancer-RiskPrediction"

@@ -1,0 +1,5 @@
+Model,Brier,Cal slope,Cal intercept,ECE,CITL
+Scorecard (frozen map),0.0771,1.765,1.893,0.0841,-0.341
+Logistic reg.,0.1053,1.193,0.525,0.1298,-0.209
+ROMA,0.1542,1.769,4.164,0.2115,-0.861
+CPH-I,0.2111,0.99,3.448,0.2718,-1.115

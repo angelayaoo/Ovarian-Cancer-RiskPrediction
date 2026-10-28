@@ -1,0 +1,3 @@
+Subset,Cancers (N),Benign (N),Cancer prevalence (%),Age mean,CA125 median,Postmenopausal (%)
+Complete cases (measured HE4),63,37,63.0,45.2,95.1,31.0
+Excluded (imputed HE4),125,155,44.6,42.2,60.7,31.8

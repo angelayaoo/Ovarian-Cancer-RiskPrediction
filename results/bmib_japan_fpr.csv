@@ -1,0 +1,5 @@
+Strategy,False positives (N),FPR (%)
+Scorecard >= +1,0,0.0
+ROMA cutpoints,0,0.0
+CPH-I >= 7%,1,0.7
+CA125 >= 35 U/mL,10,6.7

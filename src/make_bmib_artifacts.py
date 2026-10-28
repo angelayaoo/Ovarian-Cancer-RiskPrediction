@@ -5,9 +5,16 @@ but are not produced by the core pipeline scripts:
 
   results/bmib_complete_case.csv      complete-case (n=100) AUROCs + 95% CIs
   results/bmib_tuned_ensembles.csv    Setting B (nested-CV tuned) AUROCs + CIs
-  results/bmib_mice.csv               MICE-imputed West China AUROCs
+  results/bmib_mice.csv               MICE-imputed West China AUROCs (all 8 models)
   results/bmib_recalibrated_harms.csv recalibrated ROMA/CPH-I minimum harms
   results/bmib_calibration_slope.csv  probability-scale slope/intercept/ECE
+  results/bmib_cc_calibration.csv     frozen calibration on the complete cases
+  results/bmib_cc_operating.csv       complete-case published-cutpoint operating points
+  results/bmib_japan_fpr.csv          false-positive rates among Japan's 150 healthy women
+  results/bmib_cc_balance.csv         complete-case vs excluded outcome/covariate balance
+  results/bmib_japan_descriptives.csv Japan lowest-bin shares and marker medians
+  results/bmib_no_he4.csv             three-feature (no-HE4) refit AUROCs
+  results/bmib_insample.csv           in-sample ensemble fits (vs CV in Section III-E)
   bmib_hs/figures/fig1_auroc.png      complete-case forest plot
   bmib_hs/figures/fig2_cons.png        decision curve analysis (net benefit)
   bmib_hs/figures/fig3_regime_col.png ensemble-average vs scorecard regime map
@@ -122,21 +129,24 @@ def main():
                                         'CI high']).to_csv(
         os.path.join(RESULTS_DIR, 'bmib_default_ensembles.csv'), index=False)
 
-    # ---------- MICE sensitivity ----------
+    # ---------- MICE sensitivity (all eight models, Setting B trees) ----------
     feat = raw_w[['ca125', 'he4', 'age', 'menopause']].copy()
     imp = IterativeImputer(max_iter=10, random_state=42)
     X_mice = imp.fit_transform(feat)
     X_w_mice = X_w.copy()
     X_w_mice['HE4'] = X_mice[:, 1]
     mice_rows = []
-    for key in ['Raw LR', 'Scorecard', 'CatBoost']:
-        v, lo, hi = boot_row(y_w, zoo[key](X_w_mice))
+    for key in ['Scorecard', 'Raw LR', 'ROMA', 'CPH-I', 'CA125 rule',
+                'XGBoost', 'CatBoost', 'Random Forest']:
+        p = tuned[key].predict_proba(X_w_mice)[:, 1] if key in tuned \
+            else zoo[key](X_w_mice)
+        v, lo, hi = boot_row(y_w, p)
         mice_rows.append((key, v, lo, hi))
     pd.DataFrame(mice_rows, columns=['Model', 'AUROC', 'CI low', 'CI high']
                  ).to_csv(os.path.join(RESULTS_DIR, 'bmib_mice.csv'),
                           index=False)
 
-    # ---------- recalibrated published-formula harms ----------
+    # ---------- recalibrated harms for all five Q2 models ----------
     thresholds = np.linspace(0.01, 0.60, 120)
     weights = [1, 5, 10, 50]
 
@@ -154,12 +164,20 @@ def main():
             out[w] = round(best, 1)
         return out
 
+    def recalib(p):
+        m = LogisticRegression().fit(np.asarray(p).reshape(-1, 1), y_w)
+        return m.predict_proba(np.asarray(p).reshape(-1, 1))[:, 1]
+
+    q2_probs = {
+        'Scorecard': zoo['Scorecard'](X_w),
+        'Logistic reg.': zoo['Raw LR'](X_w),
+        'ROMA': zoo['ROMA'](X_w) / 100.0,
+        'CPH-I': zoo['CPH-I'](X_w),
+        'XGBoost': zoo['XGBoost'](X_w),
+    }
     harm_rows = []
-    for name, raw_p in [('ROMA', zoo['ROMA'](X_w) / 100.0),
-                        ('CPH-I', zoo['CPH-I'](X_w))]:
-        recal = LogisticRegression().fit(raw_p.reshape(-1, 1), y_w)
-        p_rec = recal.predict_proba(raw_p.reshape(-1, 1))[:, 1]
-        harms = min_harm(p_rec, weights)
+    for name, raw_p in q2_probs.items():
+        harms = min_harm(recalib(raw_p), weights)
         harm_rows.append((name + ' (recalibrated)', harms[1], harms[5],
                           harms[10], harms[50]))
     pd.DataFrame(harm_rows, columns=['Model', 'w=1', 'w=5', 'w=10', 'w=50']
@@ -199,6 +217,143 @@ def main():
     pd.DataFrame(cal_rows, columns=['Model', 'Cal slope', 'Cal intercept',
                                     'ECE']).to_csv(
         os.path.join(RESULTS_DIR, 'bmib_calibration_slope.csv'), index=False)
+
+    # ---------- frozen calibration on the complete cases (n=100) ----------
+    s_tr = zoo['Scorecard'](X_tr)
+    frozen_map = LogisticRegression().fit(s_tr.reshape(-1, 1), y_tr)
+    cc_probs = {
+        'Scorecard (frozen map)':
+            frozen_map.predict_proba(zoo['Scorecard'](X_cc).reshape(-1, 1))[:, 1],
+        'Logistic reg.': zoo['Raw LR'](X_cc),
+        'ROMA': zoo['ROMA'](X_cc) / 100.0,
+        'CPH-I': zoo['CPH-I'](X_cc),
+    }
+    cc_cal_rows = []
+    for name, p in cc_probs.items():
+        p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+        b = float(np.mean((y_cc - p) ** 2))
+        m = LogisticRegression().fit(logit(p).reshape(-1, 1), y_cc)
+        citl = float(np.log(np.mean(p) / (1 - np.mean(p)))
+                     - np.log(np.mean(y_cc) / (1 - np.mean(y_cc))))
+        cc_cal_rows.append((name, round(b, 4), round(float(m.coef_[0][0]), 3),
+                            round(float(m.intercept_[0]), 3),
+                            round(ece(y_cc, p), 4), round(citl, 3)))
+    pd.DataFrame(cc_cal_rows, columns=['Model', 'Brier', 'Cal slope',
+                                       'Cal intercept', 'ECE', 'CITL']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_cc_calibration.csv'), index=False)
+
+    # ---------- complete-case operating points (n=100) ----------
+    def op_row(name, pred):
+        pred = np.asarray(pred)
+        tp = float(((pred == 1) & (y_cc == 1)).sum())
+        fp = float(((pred == 1) & (y_cc == 0)).sum())
+        fn = float(((pred == 0) & (y_cc == 1)).sum())
+        tn = float(((pred == 0) & (y_cc == 0)).sum())
+        return (name, round(tp / (tp + fn), 3), round(tn / (tn + fp), 3),
+                int(fn), int(tp + fn), int(fp), int(tn + fp))
+
+    roma_cc = zoo['ROMA'](X_cc)
+    roma_cc_rule = np.where(X_cc['Is_Postmenopausal'].values == 1,
+                            roma_cc >= B.ROMA_CUT_POST,
+                            roma_cc >= B.ROMA_CUT_PRE)
+    op_rows = [
+        op_row('Scorecard >= +1', zoo['Scorecard'](X_cc) >= 1),
+        op_row('ROMA cutpoints', roma_cc_rule),
+        op_row('CPH-I >= 7%', zoo['CPH-I'](X_cc) * 100 >= B.CPHI_CUT),
+        op_row('CA125 >= 35 U/mL', X_cc['CA125'].values >= B.CA125_CUT),
+    ]
+    pd.DataFrame(op_rows, columns=['Strategy', 'Sensitivity', 'Specificity',
+                                   'Missed (N)', 'Cancers (N)',
+                                   'Unnecessary (N)', 'Benign (N)']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_cc_operating.csv'), index=False)
+
+    # ---------- Japan false-positive rates among the 150 healthy women ------
+    healthy = y_j == 0
+    s_j = zoo['Scorecard'](X_j)
+    roma_j = zoo['ROMA'](X_j)
+    roma_j_rule = np.where(X_j['Is_Postmenopausal'].values == 1,
+                           roma_j >= B.ROMA_CUT_POST,
+                           roma_j >= B.ROMA_CUT_PRE)
+    fpr_rows = []
+    for name, pred in [
+            ('Scorecard >= +1', s_j >= 1),
+            ('ROMA cutpoints', roma_j_rule),
+            ('CPH-I >= 7%', zoo['CPH-I'](X_j) * 100 >= B.CPHI_CUT),
+            ('CA125 >= 35 U/mL', X_j['CA125'].values >= B.CA125_CUT)]:
+        fp = int(((np.asarray(pred) == 1) & healthy).sum())
+        fpr_rows.append((name, fp, round(fp / float(healthy.sum()) * 100, 1)))
+    pd.DataFrame(fpr_rows, columns=['Strategy', 'False positives (N)',
+                                    'FPR (%)']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_japan_fpr.csv'), index=False)
+
+    # ---------- Japan descriptives (lowest-bin share and marker medians) ----
+    lo_ca = X_j['CA125'].values < 24.3
+    lo_he = X_j['HE4'].values < 45.8
+    both_low = lo_ca & lo_he
+    desc_rows = [
+        ('Healthy in both lowest bins (%)',
+         round(float(np.mean(both_low[healthy])) * 100, 1)),
+        ('Cancer in both lowest bins (%)',
+         round(float(np.mean(both_low[~healthy])) * 100, 1)),
+        ('Healthy CA125 median (U/mL)', round(float(X_j.loc[healthy, 'CA125'].median()), 1)),
+        ('Healthy HE4 median (pmol/L)', round(float(X_j.loc[healthy, 'HE4'].median()), 1)),
+        ('West China CA125 median (U/mL)', round(float(X_w['CA125'].median()), 1)),
+        ('West China HE4 median (pmol/L)', round(float(X_w['HE4'].median()), 1)),
+    ]
+    pd.DataFrame(desc_rows, columns=['Quantity', 'Value']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_japan_descriptives.csv'), index=False)
+
+    # ---------- no-HE4 refits (3-feature models, unchanged elsewhere) -------
+    feats3 = ['CA125', 'Age', 'Is_Postmenopausal']
+    X_tr3, X_w3 = X_tr[feats3], X_w[feats3]
+    sc3 = B.Scorecard(n_bins=3).fit(X_tr3, y_tr)
+    lr3 = B.RawLR().fit(X_tr3, y_tr)
+    qt3 = B.QuantileTransformer(n_quantiles=100, output_distribution='uniform',
+                                random_state=SEED)
+    xgb3 = XGBClassifier(random_state=SEED, eval_metric='logloss').fit(
+        qt3.fit_transform(X_tr3), y_tr)
+    nohe4_rows = [
+        ('Scorecard', round(float(B.auroc(y_w, sc3.predict_score(X_w3))), 3)),
+        ('Logistic reg.', round(float(B.auroc(y_w, lr3.predict_proba(X_w3))), 3)),
+        ('XGBoost', round(float(B.auroc(y_w, xgb3.predict_proba(
+            qt3.transform(X_w3))[:, 1])), 3)),
+    ]
+    pd.DataFrame(nohe4_rows, columns=['Model', 'AUROC (no HE4)']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_no_he4.csv'), index=False)
+
+    # ---------- in-sample fits vs CV (Section III-E) ------------------------
+    in_rows = []
+    for key in ['XGBoost', 'CatBoost', 'Random Forest']:
+        insample = float(B.auroc(y_tr, zoo[key](X_tr)))
+        in_rows.append((key, round(insample, 3)))
+    pd.DataFrame(in_rows, columns=['Model', 'In-sample AUROC']).to_csv(
+        os.path.join(RESULTS_DIR, 'bmib_insample.csv'), index=False)
+
+    # ---------- complete-case versus excluded outcome balance ----------
+    from scipy.stats import fisher_exact
+    n_cc_ca = int(y_cc.sum())
+    n_cc_be = int(len(y_cc) - n_cc_ca)
+    n_ex_ca = int(y_w.sum()) - n_cc_ca
+    n_ex_be = int((y_w == 0).sum()) - n_cc_be
+    _, p_fisher = fisher_exact([[n_cc_ca, n_cc_be], [n_ex_ca, n_ex_be]])
+    bal_rows = [
+        ('Complete cases (measured HE4)', n_cc_ca, n_cc_be,
+         round(100 * n_cc_ca / len(y_cc), 1),
+         round(float(X_cc['Age'].mean()), 1),
+         round(float(X_cc['CA125'].median()), 1),
+         round(float((X_cc['Is_Postmenopausal'] == 1).mean()) * 100, 1)),
+        ('Excluded (imputed HE4)', n_ex_ca, n_ex_be,
+         round(100 * n_ex_ca / (n_ex_ca + n_ex_be), 1),
+         round(float(X_w.loc[~cc, 'Age'].mean()), 1),
+         round(float(X_w.loc[~cc, 'CA125'].median()), 1),
+         round(float((X_w.loc[~cc, 'Is_Postmenopausal'] == 1).mean()) * 100, 1)),
+    ]
+    pd.DataFrame(bal_rows, columns=['Subset', 'Cancers (N)', 'Benign (N)',
+                                    'Cancer prevalence (%)', 'Age mean',
+                                    'CA125 median', 'Postmenopausal (%)']
+                 ).to_csv(os.path.join(RESULTS_DIR, 'bmib_cc_balance.csv'),
+                          index=False)
+    print(f'Fisher exact test (outcome vs HE4 measured): p = {p_fisher:.4f}')
 
     # ---------- West China paired scorecard-minus-comparator differences --
     def paired_diffs(X, y, out_path):
@@ -280,11 +435,13 @@ def main():
 
     p_roma = zoo['ROMA'](X_w) / 100.0
     p_cphi = zoo['CPH-I'](X_w)
+    p_lr = zoo['Raw LR'](X_w)
     recal_roma = LogisticRegression().fit(p_roma.reshape(-1, 1), y_w)
     recal_cphi = LogisticRegression().fit(p_cphi.reshape(-1, 1), y_w)
+    recal_lr = LogisticRegression().fit(p_lr.reshape(-1, 1), y_w)
     dca_probs = {
         'Scorecard': recal_s.predict_proba(s_w.reshape(-1, 1))[:, 1],
-        'Logistic reg.': zoo['Raw LR'](X_w),
+        'Logistic reg.': recal_lr.predict_proba(p_lr.reshape(-1, 1))[:, 1],
         'ROMA (recal.)': recal_roma.predict_proba(p_roma.reshape(-1, 1))[:, 1],
         'CPH-I (recal.)': recal_cphi.predict_proba(p_cphi.reshape(-1, 1))[:, 1],
     }
